@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class pressure_drop extends Model
 {
     use HasFactory;
+
+    protected $table = "PRESSURE_DROPs";
 }

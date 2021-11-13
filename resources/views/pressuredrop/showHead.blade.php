@@ -53,12 +53,10 @@
                             	<input type="text" class="form-control" name="PRESSURE_DROP" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->PRESSURE_DROP }}" />
                             </td>
                             <td>
-                            	{{ $pressuredrop->SPEED }}
-<!--                             	<input type="text" class="form-control" name="SPEED" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->SPEED }}" /> -->
+                            	<input type="text" class="form-control" name="SPEED" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->SPEED }}" />
                             </td>
                             <td>
-                            	{{ $pressuredrop->HEAD }}
-<!--                             	<input type="text" class="form-control" name="HEAD" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->HEAD }}" /> -->
+                            	<input type="text" class="form-control" name="HEAD" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->HEAD }}" />
                             </td>
                             <td>
                             	<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">

@@ -15,6 +15,14 @@ class pressuredropController extends Controller
     public function show($id){
 
         $materials = material::where('id',$id)->get();
+
+        //******************************************************************
+        //  ここでCentrifugal-pumpのみ条件分岐させる
+        //  物品種別の取得↓
+            var_dump($materials[0]['MATERIAL_KIND']);
+        //******************************************************************
+
+
         //選択した物品の規格を取得
         $material_details = material_detail::
         where('MATERIAL_ID',$id)
@@ -59,8 +67,6 @@ class pressuredropController extends Controller
             $pre_flow_list = array();
             $pressuredrops[] = $pre_pressuredrops;
         }
-        // 取得した値をビュー「book/index」に渡す
-
         //var_dump($pressuredrop_list);
         return view(
             'pressuredrop/showPressuredrop',
@@ -89,8 +95,8 @@ class pressuredropController extends Controller
         $pressuredrop = new pressure_drop();
         $pressuredrop->FLOW = $request->FLOW;
         $pressuredrop->PRESSURE_DROP = $request->PRESSURE_DROP;
-        $pressuredrop->SPEED = $request->SPEED;
-        $pressuredrop->HEAD = $request->HEAD;
+        //$pressuredrop->SPEED = $request->SPEED;
+        //$pressuredrop->HEAD = $request->HEAD;
         $pressuredrop->save();
         var_dump($request->material_id);
         return redirect("/pressuredrop");

@@ -23,8 +23,11 @@ class materialDetailController extends Controller
         $material_details = material_detail::where('DELETE_FLG',True)
         ->where('MATERIAL_ID',$id)
         ->get();
+        $material = material::where('DELETE_FLG',True)
+        ->where('id',$id)
+        ->get();
         // 取得した値をビュー「book/index」に渡す
-        return view('material-detail/index', compact('material_details'));
+        return view('material-detail/index', compact('material_details','material'));
     }
 
 

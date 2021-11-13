@@ -2,16 +2,19 @@
 @extends('material/header_layout')
 @section('content')
 <div class="container ops-main">
-    <div class="row">
-        <div class="col-md-12">
-        	<h3 class="ops-title">物品一覧</h3>
-        </div>
+	<div class="row">
+        <nav aria-label="breadcrumb" role="navigation">
+            <ol class="breadcrumb">
+            	<li class="breadcrumb-item active" aria-current="page"><a href="/">メインメニュー</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="#">物品一覧</a></li>
+            </ol>
+        </nav>
     </div>
 	<div class="row">
-		<div class="col-md-11 col-md-offset-1">
+<!-- 		<div class="col-md-11 col-md-offset-1"> -->
+		<div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
     		<table class="table text-center">
         		<tr>
-
                     <th class="text-center">物品名</th>
                     <th class="text-center">メーカー</th>
                     <th class="text-center">種別</th>
@@ -29,8 +32,10 @@
                     <td>{{ $material->MATERIAL_KIND }}</td>
                     <td>
                     	@if($material->MATERIAL_KIND == 'Centrifugal-pump')
-               				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            			@else
+							<a href="/pressuredrop/{{ $material->id }}">
+                        		<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                        	</a>
+               			@else
                         	<a href="/pressuredrop/{{ $material->id }}">
                         		<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                         	</a>
@@ -58,4 +63,10 @@
 		</div>
     </div>
 </div>
+@endsection
 </html>
+
+
+
+
+

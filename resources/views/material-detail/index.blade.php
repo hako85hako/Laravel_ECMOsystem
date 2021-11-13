@@ -2,12 +2,15 @@
 @extends('material/header_layout')
 @section('content')
 <div class="container ops-main">
-    <div class="row">
-        <div class="col-md-12">
-        	<h3 class="ops-title">物品一覧</h3>
-        </div>
+   <div class="row">
+        <nav aria-label="breadcrumb" role="navigation">
+            <ol class="breadcrumb">
+            	<li class="breadcrumb-item active" aria-current="page"><a href="/">メインメニュー</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="/material">物品一覧</a></li>
+                <li class="breadcrumb-item"><a href="#">{{ $material[0]->MATERIAL_NAME }}:規格編集</a></li>
+            </ol>
+        </nav>
     </div>
-    <a href="/material">戻る</a>
 	<div class="row">
 		<div class="col-md-11 col-md-offset-1">
     		<table class="table text-center">
@@ -55,11 +58,15 @@
         	<div>
         		<form action="/material-detail/create" method="get">
 <!--         			<input type="hidden" name="material_detail_id" value="{{ $material_detail->id }}"> -->
-        			 <input type="hidden" name="material_id" value="{{ $material_detail->MATERIAL_ID }}">
+        			<input type="hidden" name="material_id" value="{{ $material_detail->MATERIAL_ID }}">
         			<button type="submit" class="btn btn-default">追加</button>
-           		</form>
+               		<button type="submit" form="nonPush" class="btn btn-default">追加せずに戻る</button>
+                </form>
+                <form action="/material" id="nonPush" method="get">
+                </form>
         	</div>
 		</div>
     </div>
 </div>
+@endsection
 </html>

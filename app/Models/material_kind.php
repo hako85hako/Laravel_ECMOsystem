@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class oxygenator extends Model
+class material_kind extends Model
 {
     use HasFactory;
+
+    protected $table = "MATERIAL_KINDs";
 }
