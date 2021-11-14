@@ -25,7 +25,7 @@ class pressuredropController extends Controller
         //******************************************************************
         //  ここでCentrifugal-pumpのみ条件分岐させる
         //  物品種別の取得↓
-            var_dump($materials[0]['MATERIAL_KIND']);
+            //var_dump($materials[0]['MATERIAL_KIND']);
         //******************************************************************
 
 
@@ -112,7 +112,6 @@ class pressuredropController extends Controller
         $pressuredrop->CREATE_USER_ID = Auth::user()->id;
         $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
         $pressuredrop->save();
-        var_dump($request->material_id);
         return redirect("/pressuredrop");
     }
 
