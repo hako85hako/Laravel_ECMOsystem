@@ -13,12 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
- Route::get('/', function () {
-     return view('welcome');
- });
-//Route::get('ECMO-simulator/menu', 'mainController@index');
-//Route::post('ECMO-simulator/start', 'mainController@start');
-//Route::get('ECMO-simulator/', 'menuController@start');
+//   Route::get('/', function () {
+//       return view('/welcome');
+//   });
+     //Route::get('/', 'menuController@index');
 
      Route::resource('material','App\Http\Controllers\materialController');
 
@@ -27,3 +25,10 @@ use Illuminate\Support\Facades\Route;
      Route::resource('material-detail','App\Http\Controllers\materialDetailController');
 
 
+
+Auth::routes();
+
+
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home2');

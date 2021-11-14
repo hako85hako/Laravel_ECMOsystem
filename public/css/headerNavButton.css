@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+#navbarDropdown{
+	border: none;  /* 枠線を消す */
+    outline: none; /* クリックしたときに表示される枠線を消す */
+	background-color:#2D3748;
+
+}
+
+#headerUl{
+	list-style-type: none
+}
+
+/* a#dropdown-item.dropdown-item{
+	padding-left: auto;
+	padding-right: auto;
+	font-size:16px;
+}
+ */
+#dropdownMenu{
+
+	padding-left: auto;
+	padding-right: auto;
+	font-size:16px;
+}
+
+
+
+
+
+

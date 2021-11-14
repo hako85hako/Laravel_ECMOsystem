@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\pressure_drop;
 use App\Models\material_detail;
@@ -12,6 +13,11 @@ use phpDocumentor\Reflection\PseudoTypes\False_;
 
 class pressuredropController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function show($id){
 
         $materials = material::where('id',$id)->get();
@@ -86,6 +92,10 @@ class pressuredropController extends Controller
         $pressuredrop = new pressure_drop();
         $pressuredrop->MATERIAL_DETAIL_ID = $request->material_detail_id;
         $pressuredrop->FLOW = ($request->last_flow)+($request->slice_flow);
+        $pressuredrop->CREATE_USER = Auth::user()->name;
+        $pressuredrop->UPDATE_USER = Auth::user()->name;
+        $pressuredrop->CREATE_USER_ID = Auth::user()->id;
+        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
         $pressuredrop->save();
         return redirect("/pressuredrop/".$request->material_id)->with($request->material_id);
     }
@@ -97,6 +107,10 @@ class pressuredropController extends Controller
         $pressuredrop->PRESSURE_DROP = $request->PRESSURE_DROP;
         //$pressuredrop->SPEED = $request->SPEED;
         //$pressuredrop->HEAD = $request->HEAD;
+        $pressuredrop->CREATE_USER = Auth::user()->name;
+        $pressuredrop->UPDATE_USER = Auth::user()->name;
+        $pressuredrop->CREATE_USER_ID = Auth::user()->id;
+        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
         $pressuredrop->save();
         var_dump($request->material_id);
         return redirect("/pressuredrop");
@@ -105,8 +119,6 @@ class pressuredropController extends Controller
     public function edit($id){
         // DBよりURIパラメータと同じIDを持つBookの情報を取得
         $pressuredrop = pressure_drop::findOrFail($id);
-
-        // 取得した値をビュー「book/edit」に渡す
         return view('pressuredrop/edit', compact('pressuredrop'));
     }
 
@@ -114,8 +126,10 @@ class pressuredropController extends Controller
         $pressuredrop = pressure_drop::findOrFail($id);
         $pressuredrop->FLOW = $request->FLOW;
         $pressuredrop->PRESSURE_DROP = $request->PRESSURE_DROP;
-        $pressuredrop->SPEED = $request->SPEED;
-        $pressuredrop->HEAD = $request->HEAD;
+        $pressuredrop->SPEED = 0;
+        $pressuredrop->HEAD = 0;
+        $pressuredrop->UPDATE_USER = Auth::user()->name;
+        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
         $pressuredrop->save();
         return redirect("/pressuredrop/".$request->material_id)->with($request->material_id);
     }
@@ -125,6 +139,8 @@ class pressuredropController extends Controller
         //$material->delete();
         $pressuredrop = pressure_drop::findOrFail($id);
         $pressuredrop->DELETE_FLG = 0;
+        $pressuredrop->UPDATE_USER = Auth::user()->name;
+        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
         $pressuredrop->save();
         return redirect("/pressuredrop/".$request->material_id)->with($request->material_id);
     }

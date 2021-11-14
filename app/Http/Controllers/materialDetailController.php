@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\material;
 use App\Models\material_detail;
@@ -12,6 +13,11 @@ use phpDocumentor\Reflection\PseudoTypes\False_;
 
 class materialDetailController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function index(){
         //indexは使用しない
         //showをindexのように使用する
@@ -26,7 +32,6 @@ class materialDetailController extends Controller
         $material = material::where('DELETE_FLG',True)
         ->where('id',$id)
         ->get();
-        // 取得した値をビュー「book/index」に渡す
         return view('material-detail/index', compact('material_details','material'));
     }
 
@@ -34,13 +39,20 @@ class materialDetailController extends Controller
 
     public function create(Request $request)
     {
-        // 空の$bookを渡す
         $material_detail = new material_detail();
         $material_detail->MATERIAL_ID = $request->material_id;
+        $material_detail->CREATE_USER = Auth::user()->name;
+        $material_detail->UPDATE_USER = Auth::user()->name;
+        $material_detail->CREATE_USER_ID = Auth::user()->id;
+        $material_detail->UPDATE_USER_ID = Auth::user()->id;
         $material_detail->save();
         $pressuredrop = new pressure_drop();
         $pressuredrop->MATERIAL_DETAIL_ID = $material_detail->id;
         $pressuredrop->FLOW = 0;
+        $pressuredrop->CREATE_USER = Auth::user()->name;
+        $pressuredrop->UPDATE_USER = Auth::user()->name;
+        $pressuredrop->CREATE_USER_ID = Auth::user()->id;
+        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
         $pressuredrop->save();
         return redirect("/material-detail/".$request->material_id)->with($request->material_id);
     }
@@ -53,6 +65,10 @@ class materialDetailController extends Controller
         $material_detail->MATERIAL_VOLUME = $request->MATERIAL_VOLUME;
         $material_detail->SLICE_FLOW = $request->SLICE_FLOW;
         $material_detail->SLICE_REVOLUTIONS = $request->SLICE_REVOLUTIONS;
+        $material_detail->CREATE_USER = Auth::user()->name;
+        $material_detail->UPDATE_USER = Auth::user()->name;
+        $material_detail->CREATE_USER_ID = Auth::user()->id;
+        $material_detail->UPDATE_USER_ID = Auth::user()->id;
         $material_detail->save();
         $material_details = material_detail::where('DELETE_FLG',True)
         ->where('MATERIAL_ID',$request->MATERIAL_ID)
@@ -74,6 +90,8 @@ class materialDetailController extends Controller
         $material_detail->MATERIAL_VOLUME = $request->MATERIAL_VOLUME;
         $material_detail->SLICE_FLOW = $request->SLICE_FLOW;
         $material_detail->SLICE_REVOLUTIONS = $request->SLICE_REVOLUTIONS;
+        $material_detail->UPDATE_USER = Auth::user()->name;
+        $material_detail->UPDATE_USER_ID = Auth::user()->id;
         $material_detail->save();
         return redirect("/material-detail/".$request->material_id)->with($request->material_id);
     }
@@ -83,6 +101,8 @@ class materialDetailController extends Controller
         //$material->delete();
         $material_detail = material_detail::findOrFail($id);
         $material_detail->DELETE_FLG = 0;
+        $material_detail->UPDATE_USER = Auth::user()->name;
+        $material_detail->UPDATE_USER_ID = Auth::user()->id;
         $material_detail->save();
         return redirect("/material-detail/".$request->material_id)->with($request->material_id);
 
