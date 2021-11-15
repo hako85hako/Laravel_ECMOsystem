@@ -41,10 +41,14 @@
                             <th class="text-center">更新者<br></th>
                             <th class="text-center">作成者<br></th>
                             <th class="text-center">最終更新日時</th>
-                            <th class="text-center">更新</th>
-                            <th class="text-center">削除</th>
-                            <th class="text-center">公開</th>
-                            <th class="text-center">編集ロック</th>
+
+                          	@if(Auth::user()->role === "manager" or
+								Auth::user()->role === "admin")
+                                    <th class="text-center">更新</th>
+                                    <th class="text-center">削除</th>
+                                    <th class="text-center">公開</th>
+                                    <th class="text-center">編集ロック</th>
+                           @endif
                         </tr>
         			@foreach($pressuredrops[$i] as $pressuredrop)
                         <tr>
@@ -74,60 +78,64 @@
                             	{{ $pressuredrop->updated_at }}
                             </td>
 
-                            <td>
-                            <!--更新ボタン-->
-                             @if($pressuredrop->LOCK_FLG === 1)
-                            	<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-                           	@else
-                           		<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
-               						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
-                                    <input type="hidden" name="_method" value="PUT">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                           			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
-                           		</form>
-                           	@endif
-                       	 	</td>
-                            <td>
-                            <!--削除ボタン-->
-                            @if($pressuredrop->LOCK_FLG === 1)
-                           		<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-                           	@else
-                           		<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post">
-                            		<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                           			<button type="submit" class="btn btn-xs btn-danger" aria-label="Left Align"><span class="glyphicon glyphicon-trash"></span></button>
-                           		</form>
-                           	@endif
-                       	 	</td>
-                       	 	<td>
-                       	 	 <!--公開ボタン-->
-                       	 	@if(Auth::user()->id === $pressuredrop->CREATE_USER_ID)
-                                @if($pressuredrop->PUBLIC_FLG == 1)
-                                	公開中
-                                @else
-                                	非公開中
-                                @endif
-                                <!--公開設定ボタンを設置 -->
-							@else
-								公開中
-							@endif
-                       	 	</td>
-                       	 	 <td>
-                       	     <!--編集ロックボタン-->
-                       	    @if(Auth::user()->role === "manager" or
-                       	    	Auth::user()->role === "admin"
-                       	    )
-								@if($pressuredrop->PUBLIC_FLG == 1)
-                                    編集アンロック<!--編集ロックをオフにするボタンを設置 -->
-								@else
-                                    編集ロック<!--編集ロックをオンにするボタンを設置 -->
-                                @endif
-                       	 	@else
-                       	 		権限なし
-                       	 	@endif
 
-                       	 	</td>
+
+							@if(Auth::user()->role === "manager" or
+								Auth::user()->role === "admin")
+                                    <td>
+                                    <!--更新ボタン-->
+                                    @if($pressuredrop->LOCK_FLG === 1)
+                                    	<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                                   	@else
+                                   		<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
+                       						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+                                            <input type="hidden" name="_method" value="PUT">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                   			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+                                   		</form>
+                                   	@endif
+                               	 	</td>
+                                    <td>
+                                    <!--削除ボタン-->
+                                    @if($pressuredrop->LOCK_FLG === 1)
+                                   		<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                                   	@else
+                                   		<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post">
+                                    		<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                   			<button type="submit" class="btn btn-xs btn-danger" aria-label="Left Align"><span class="glyphicon glyphicon-trash"></span></button>
+                                   		</form>
+                                   	@endif
+                               	 	</td>
+                               	 	<td>
+                               	 	 <!--公開ボタン-->
+                               	 	@if(Auth::user()->id === $pressuredrop->CREATE_USER_ID)
+                                        @if($pressuredrop->PUBLIC_FLG == 1)
+                                        	公開中
+                                        @else
+                                        	非公開中
+                                        @endif
+                                        <!--公開設定ボタンを設置 -->
+        							@else
+        								公開中
+        							@endif
+                               	 	</td>
+                               	 	 <td>
+                               	     <!--編集ロックボタン-->
+                               	    @if(Auth::user()->role === "manager" or
+                               	    	Auth::user()->role === "admin"
+                               	    )
+        								@if($pressuredrop->PUBLIC_FLG == 1)
+                                            編集アンロック<!--編集ロックをオフにするボタンを設置 -->
+        								@else
+                                            編集ロック<!--編集ロックをオンにするボタンを設置 -->
+                                        @endif
+                               	 	@else
+                               	 		権限なし
+                               	 	@endif
+                               	 	</td>
+                            @endif
 						</tr>
         			@endforeach
     			</table>

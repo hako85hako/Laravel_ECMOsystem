@@ -1,5 +1,4 @@
 	<head>
-        <title>Laravel Sample</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -45,7 +44,7 @@
     	        @else
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle btn btn-default" href="#" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre style="color:#D9D9D9">
                                 {{ Auth::user()->name }}
                             </a>
 
