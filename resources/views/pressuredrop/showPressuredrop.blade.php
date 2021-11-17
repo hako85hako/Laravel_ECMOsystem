@@ -28,22 +28,20 @@
     <!--         ============================================== -->
     <!--         ============================================== -->
 
-            <?php //print($pressuredrops[0][0]->MATERIAL_DETAIL_ID);?>
-            <?php //var_dump($material_details[0]->MATERIAL_ID);?>
          	<?php $i = 0 ;?>
     	@foreach($size_list as $size)
                 <details>
                 <summary>物品規格 ： {{$size}} </summary>
                 	<table class="table text-center">
                 		<tr>
-                            <th class="text-center">流量<br>[L/min]</th>
-                            <th class="text-center">圧力損失<br>[mmHg]</th>
-                            <th class="text-center">更新者<br></th>
-                            <th class="text-center">作成者<br></th>
-                            <th class="text-center">最終更新日時</th>
+                            <th class="text-center">流量 [ L/min ]</th>
+                            <th class="text-center">圧力損失 [ mmHg ]</th>
+                            <th class="text-center">更新日時</th>
+                            <th class="text-center">更新者</th>
+                            <th class="text-center">作成者</th>
 
-                          	@if(Auth::user()->role === "manager" or
-								Auth::user()->role === "admin")
+
+                          	@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
                                     <th class="text-center">更新</th>
                                     <th class="text-center">削除</th>
                                     <th class="text-center">公開</th>
@@ -59,11 +57,19 @@
                             </td>
                             <td>
                             	<!--圧力損失-->
-                            	@if($pressuredrop->LOCK_FLG == 1)
-                            		{{ $pressuredrop->PRESSURE_DROP }}
-                            	@else
-                            		<input type="text" class="form-control" name="PRESSURE_DROP" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->PRESSURE_DROP }}" />
-								@endif
+                            	@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
+                                	@if($pressuredrop->LOCK_FLG == 1)
+                                		{{ $pressuredrop->PRESSURE_DROP }}
+                                	@else
+                                		<input type="text" class="form-control" name="PRESSURE_DROP" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->PRESSURE_DROP }}" />
+    								@endif
+    							@else
+    								{{ $pressuredrop->PRESSURE_DROP }}
+    							@endif
+                            </td>
+                            <td>
+                            	<!--更新日時-->
+                            	{{ $pressuredrop->updated_at }}
                             </td>
                             <td>
                             	<!--作成者-->
@@ -73,21 +79,18 @@
                             	<!--更新者-->
                             	{{ $pressuredrop->UPDATE_USER }}
                             </td>
-                            <td>
-                            	<!--更新日時-->
-                            	{{ $pressuredrop->updated_at }}
-                            </td>
 
 
 
-							@if(Auth::user()->role === "manager" or
-								Auth::user()->role === "admin")
+
+							@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
                                     <td>
                                     <!--更新ボタン-->
                                     @if($pressuredrop->LOCK_FLG === 1)
                                     	<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                                    	@else
                                    		<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
+                                   			<input type="hidden" name="material_kind" value="{{ $materials[0] -> MATERIAL_KIND }}">
                        						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
                                             <input type="hidden" name="_method" value="PUT">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -123,9 +126,7 @@
                                	 	</td>
                                	 	 <td>
                                	     <!--編集ロックボタン-->
-                               	    @if(Auth::user()->role === "manager" or
-                               	    	Auth::user()->role === "admin"
-                               	    )
+                               	    @if(Auth::user()->role === "manager" or Auth::user()->role === "admin" )
         								@if($pressuredrop->PUBLIC_FLG == 1)
                                             編集アンロック<!--編集ロックをオフにするボタンを設置 -->
         								@else
@@ -139,10 +140,9 @@
 						</tr>
         			@endforeach
     			</table>
-    			@if(Auth::user()->role === "manager" or
-           	    	Auth::user()->role === "admin"
-           	    )
+    			@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
                 	<form action="/pressuredrop/create" method="get">
+                		<input type="hidden" name="material_kind" value="{{ $materials[0] -> MATERIAL_KIND }}">
                         <input type="hidden" name="material_detail_id" value="{{ $pressuredrops[$i][0]->MATERIAL_DETAIL_ID}}">
                			<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
                			<input type="hidden" name="slice_flow" value="{{ $material_details[0]->SLICE_FLOW}}">

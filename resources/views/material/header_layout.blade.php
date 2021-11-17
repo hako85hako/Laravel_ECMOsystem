@@ -23,7 +23,9 @@
 			<div class="col-md-3 col-sm-2 col-xs-2">
     			<div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
+
                     <ul class="navbar-nav mr-auto">
+
 
                     </ul>
 
@@ -42,7 +44,7 @@
                         </li>
                     @endif
     	        @else
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown hidden-sm hidden-xs">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle btn btn-default" href="#" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre style="color:#D9D9D9">
                                 {{ Auth::user()->name }}
@@ -54,7 +56,6 @@
                                                  document.getElementById('logout-form').submit();">
                                     {{ __('Logout') }}
                                 </a>
-
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
                                 </form>

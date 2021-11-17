@@ -1,15 +1,16 @@
 /**
  * 圧力損失のグラフを作成する
  */
+	const aryMax = function (a, b) {return Math.max(a, b);}
 	let max_log = 0;
 	let flow_list_log = []
 	let array_data = [];
-	for(let i=0;i<size_list.length;i++){
+	for(let i=0;i<speed_list.length;i++){
 		colorCode = selectColor(i);
 		single_data = {
 			type: 'line',
-			label: size_list[i],
-			data: pressuredrop_list[size_list[i]],
+			label: speed_list[i],
+			data: head_speed_list[speed_list[i]],
 			pointHoverRadius: 8,
 			//backgroundColor: "rgba(54, 162, 235, 0.2)",
 			borderColor: colorCode,
@@ -17,10 +18,11 @@
 			borderWidth: 1,
 			//fill: 'origin',
 		};
+
 			array_data.push(single_data);
-			testflow_list = flow_list[size_list[i]];
-			console.log(testflow_list);
-			let max = testflow_list.reduce((acc, value) => (acc > value ? acc : value));
+			testflow_list = flow_list[speed_list[i]]
+			let max = testflow_list.reduce((acc, value) => (acc > value ? acc : value))
+			//let max = testflow_list.reduce(aryMax);
 			if(max>max_log){
 				max_log = max;
 				flow_list_log = testflow_list;
@@ -31,14 +33,14 @@
 		};
 
 
-    var ctx = document.getElementById('pressuredropGraph');
+    var ctx = document.getElementById('headGraph');
 	new Chart(ctx, {
 	    type: 'line',
 	    data: data,
 	    options: {
 			title:{
 				display: true,
-				text: '圧力損失[mmHg]'
+				text: '揚程[mmHg]'
 			},
 		      plugins: {
 		        filler: {

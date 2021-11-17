@@ -2,12 +2,12 @@
 @extends('material/header_layout')
 @section('content')
 <script>
-	//サイズ
-	const size_list = @json($size_list);
-    //ラベル
+	//回転数
+	const speed_list = @json($speed_list);
+    //流量(ラベル)
     const flow_list = @json($flow_list);
-    //取得した圧力損失
-    const pressuredrop_list = @json($pressuredrop_list);
+    //keyが回転数、valueが揚程
+    const head_speed_list = @json($head_speed_list);
 </script>
     <div class="container">
         <div class="row">
@@ -15,12 +15,12 @@
                 <ol class="breadcrumb">
                 	<li class="breadcrumb-item active" aria-current="page"><a href="/">メインメニュー</a></li>
                     <li class="breadcrumb-item active" aria-current="page"><a href="/material">物品一覧</a></li>
-                    <li class="breadcrumb-item"><a href="#">{{ $materials[0]->MATERIAL_NAME }}:圧力損失詳細</a></li>
+                    <li class="breadcrumb-item"><a href="#">{{ $materials[0]->MATERIAL_NAME }}:揚程詳細</a></li>
                 </ol>
             </nav>
         </div>
         <div class="row">
-    		<canvas id="pressuredropGraph"></canvas>
+    		<canvas id="headGraph"></canvas>
     	</div>
 
         <div class="row">
@@ -28,64 +28,128 @@
     <!--         ============================================== -->
     <!--         ============================================== -->
 
-            <?php //print($pressuredrops[0][0]->MATERIAL_DETAIL_ID);?>
-            <?php //var_dump($material_details[0]->MATERIAL_ID);?>
          	<?php $i = 0 ;?>
-    	@foreach($size_list as $size)
+    	@foreach($speed_list as $speed)
                 <details>
-                <summary>物品規格 ： {{$size}} </summary>
+                <summary>回転数 ： {{$speed}} rpm </summary>
                 	<table class="table text-center">
                 		<tr>
                             <th class="text-center">流量<br>[L/min]</th>
-                            <th class="text-center">圧力損失<br>[mmHg]</th>
-                            <th class="text-center">回転数<br>[rpm]</th>
                             <th class="text-center">揚程<br>[mmHg]</th>
-                            <th class="text-center">更新</th>
-                            <th class="text-center">削除</th>
+                            <th class="text-center">更新日時</th>
+                            <th class="text-center">更新者</th>
+                            <th class="text-center">作成者</th>
+
+
+                          	@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
+                                    <th class="text-center">更新</th>
+                                    <th class="text-center">削除</th>
+                                    <th class="text-center">公開</th>
+                                    <th class="text-center">編集ロック</th>
+                           @endif
                         </tr>
-        			@foreach($pressuredrops[$i] as $pressuredrop)
+        			@foreach($headflows[$speed] as $headflow)
                         <tr>
                             <td>
-                            	<label>{{ $pressuredrop->FLOW }}</label>
-                            	<input type="hidden" class="form-control" name="FLOW" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->FLOW }}" />
+                            	<label>{{ $headflow->FLOW }}</label>
+                            	<input type="hidden" class="form-control" name="FLOW" form="update{{$headflow->id}}" value="{{ $headflow->FLOW }}" />
                             </td>
                             <td>
-                            	<input type="text" class="form-control" name="PRESSURE_DROP" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->PRESSURE_DROP }}" />
+                            	@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
+                                	@if($headflow->LOCK_FLG == 1)
+                                		{{ $headflow->HEAD }}
+                                	@else
+                            			<input type="text" class="form-control" name="HEAD" form="update{{$headflow->id}}" value="{{ $headflow->HEAD }}" />
+                            		@endif
+    							@else
+    								{{ $headflow->HEAD }}
+    							@endif
+
+                            </td>
+                             <td>
+                            	<!--更新日時-->
+                            	{{ $headflow->updated_at }}
                             </td>
                             <td>
-                            	<input type="text" class="form-control" name="SPEED" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->SPEED }}" />
+                            	<!--更新者-->
+                            	{{ $headflow->UPDATE_USER }}
                             </td>
                             <td>
-                            	<input type="text" class="form-control" name="HEAD" form="update{{$pressuredrop->id}}" value="{{ $pressuredrop->HEAD }}" />
+                            	<!--作成者-->
+                            	{{ $headflow->CREATE_USER }}
                             </td>
+
+                            @if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
                             <td>
-                            	<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
-               						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
-                                    <input type="hidden" name="_method" value="PUT">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                           			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
-                           		</form>
+                             <!--更新ボタン-->
+                         	 	@if($headflow->LOCK_FLG === 1)
+                                	<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                           		@else
+                                	<form action="/pressuredrop/{{ $headflow->id }}" method="post" id="update{{$headflow->id}}">
+                                   		<input type="hidden" name="material_kind" value="{{ $materials[0] -> MATERIAL_KIND }}">
+                   						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+ 										<!--↓↓↓↓↓↓↓なんでクラスから取れんかは不明↓↓↓↓↓↓↓-->
+<!--                                         <input type="hidden" name="SPEED" value="{{$speed}}"> -->
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                               			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+                               		</form>
+                           		@endif
                        	 	</td>
                             <td>
-                            @if($pressuredrop->ONLY_FLOW_FLG === 0 )
-                            	<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post">
-                            		<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+							<!--削除ボタン-->
+                            @if($headflow->LOCK_FLG === 1)
+                            	<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                            @else
+                            	<form action="/pressuredrop/{{ $headflow->id }}" method="post">
+                            		<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID }}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                            			<button type="submit" class="btn btn-xs btn-danger" aria-label="Left Align"><span class="glyphicon glyphicon-trash"></span></button>
                            		</form>
-                           	@endif
+							@endif
                        	 	</td>
-                        </tr>
+                       	 	<td>
+                           	 	 <!--公開ボタン-->
+                           	 	@if(Auth::user()->id === $headflow->CREATE_USER_ID)
+                                    @if($headflow->PUBLIC_FLG == 1)
+                                    	公開中
+                                    @else
+                                    	非公開中
+                                    @endif
+                                    <!--公開設定ボタンを設置 -->
+    							@else
+    								公開中
+    							@endif
+                           </td>
+                        　　<td>
+                       	     <!--編集ロックボタン-->
+                       	    @if(Auth::user()->role === "manager" or Auth::user()->role === "admin" )
+								@if($headflow->PUBLIC_FLG == 1)
+                                    編集アンロック<!--編集ロックをオフにするボタンを設置 -->
+								@else
+                                    編集ロック<!--編集ロックをオンにするボタンを設置 -->
+                                @endif
+                       	 	@else
+                       	 		権限なし
+                       	 	@endif
+                       	 	</td>
+                    	@endif
+						</tr>
         			@endforeach
     			</table>
+    			@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
                 	<form action="/pressuredrop/create" method="get">
-                        <input type="hidden" name="material_detail_id" value="{{ $pressuredrops[$i][0]->MATERIAL_DETAIL_ID}}">
-               			<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
-               			<input type="hidden" name="slice_flow" value="{{ $material_details[0]->SLICE_FLOW}}">
-               			<input type="hidden" name="last_flow" value="{{ $pressuredrop->FLOW }}">
+                		<input type="hidden" name="material_kind" value="{{ $materials[0] -> MATERIAL_KIND }}">
+                	    <input type="hidden" name="material_detail_id" value="{{ $headflow -> MATERIAL_DETAIL_ID }}">
+               			<input type="hidden" name="material_id" value="{{ $material_details[0] -> MATERIAL_ID }}">
+               			<input type="hidden" name="slice_flow" value="{{ $material_details[0] -> SLICE_FLOW }}">
+               			<input type="hidden" name="slice_revolution" value="{{ $material_details[0] -> SLICE_REVOLUTIONS }}">
+               			<input type="hidden" name="last_flow" value="{{ $headflow -> FLOW }}">
+               			<input type="hidden" name="speed" value="{{ $headflow -> SPEED }}">
                			<button type="submit" class="btn btn-xs btn-danger" aria-label="Left Align">新規作成</button>
                		</form>
+               	@endif
                 </details>
                 <?php $i = $i + 1;?>
              @endforeach
@@ -94,7 +158,7 @@
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-<script src="{{ asset('/js/createGraph_pressuredrop.js') }}"></script>
+<script src="{{ asset('/js/createGraph_head.js') }}"></script>
 <script src="{{ asset('/js/accodion.js') }}"></script>
 @endsection
 </html>
