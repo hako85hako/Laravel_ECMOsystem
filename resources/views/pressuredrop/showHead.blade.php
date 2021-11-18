@@ -20,7 +20,7 @@
             </nav>
         </div>
         <div class="row">
-        	<div class="chart-container" style="position: relative; height:80vh; width:90vw">
+        	<div class="chart-container" style="position: relative; height:80vh; width:auto">
         		<canvas id="headGraph"></canvas>
    	 		</div>
     	</div>

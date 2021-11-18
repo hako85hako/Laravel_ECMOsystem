@@ -1,7 +1,7 @@
 <html>
 @extends('material/header_layout')
 @section('content')
-<div class="container ops-main">
+<div class="container">
 	<div class="row">
         <nav aria-label="breadcrumb" role="navigation">
             <ol class="breadcrumb">
@@ -18,10 +18,10 @@
                     <th class="text-center">物品名</th>
                     <th class="text-center">メーカー</th>
                     <th class="text-center">種別</th>
-                    <th class="text-center">更新日</th>
-                    <th class="text-center">作成者</th>
                     <th class="text-center">圧力損失・揚程</th>
                 @if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
+                	<th class="text-center">更新日</th>
+                    <th class="text-center">作成者</th>
                     <th class="text-center">規格追加</th>
                     <th class="text-center">編集</th>
                     <th class="text-center">削除</th>
@@ -34,8 +34,7 @@
                     <td>{{ $material->MATERIAL_NAME }}</td>
                     <td>{{ $material->COMPANY_NAME }}</td>
                     <td>{{ $material->MATERIAL_KIND }}</td>
-                    <td>{{ $material->updated_at }}</td>
-                    <td>{{ $material->UPDATE_USER }}</td>
+
                      <td>
                         	@if($material->MATERIAL_KIND == 'Centrifugal-pump')
     							<a href="/pressuredrop/{{ $material->id }}">
@@ -49,6 +48,8 @@
                     </td>
                     @if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
 						@if($material->MATERIAL_KIND == "Centrifugal-pump")
+						<td>{{ $material->updated_at }}</td>
+                    	<td>{{ $material->UPDATE_USER }}</td>
 							<td>
                                 <a href="#">
                            			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
