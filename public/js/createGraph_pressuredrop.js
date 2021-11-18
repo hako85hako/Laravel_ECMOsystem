@@ -36,6 +36,8 @@
 	    type: 'line',
 	    data: data,
 	    options: {
+			responsive: true,
+        	maintainAspectRatio: false,
 			title:{
 				display: true,
 				text: '圧力損失[mmHg]'

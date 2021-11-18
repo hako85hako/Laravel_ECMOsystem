@@ -38,6 +38,8 @@
 	    type: 'line',
 	    data: data,
 	    options: {
+        	responsive: true,
+        	maintainAspectRatio: false,
 			title:{
 				display: true,
 				text: '揚程[mmHg]'
