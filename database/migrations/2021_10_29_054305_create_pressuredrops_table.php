@@ -20,7 +20,7 @@ class CreatePressuredropsTable extends Migration
             $table->double('PRESSURE_DROP',8,4)->default(0)->comment('揚程');//揚程
             $table->double('SPEED',8,4)->default(0)->comment('回転数');//圧力損失
             $table->double('HEAD',8,4)->default(0)->comment('揚程');//揚程
-            $table->boolean('PUBLIC_FLG')->default(false)->comment('公開フラグ');//公開フラグ
+            $table->boolean('PUBLIC_FLG')->default(true)->comment('公開フラグ');//公開フラグ
             $table->boolean('LOCK_FLG')->default(false)->comment('編集不可フラグ');//編集不可フラグ
             $table->boolean('DELETE_FLG')->default(true)->comment('削除フラグ');//削除フラグ
             $table->string('CREATE_USER', 200)->comment('作成者');//作成者

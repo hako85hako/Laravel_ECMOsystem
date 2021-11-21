@@ -47,9 +47,9 @@
                             @endif
                     </td>
                     @if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
-						@if($material->MATERIAL_KIND == "Centrifugal-pump")
 						<td>{{ $material->updated_at }}</td>
                     	<td>{{ $material->UPDATE_USER }}</td>
+						@if($material->MATERIAL_KIND == "Centrifugal-pump")
 							<td>
                                 <a href="#">
                            			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>

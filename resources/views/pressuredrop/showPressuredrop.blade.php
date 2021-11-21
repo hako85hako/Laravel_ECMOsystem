@@ -38,19 +38,21 @@
                 		<tr>
                             <th class="text-center">流量 [ L/min ]</th>
                             <th class="text-center">圧力損失 [ mmHg ]</th>
-                            <th class="text-center">更新日時</th>
-                            <th class="text-center">更新者</th>
-                            <th class="text-center">作成者</th>
+							<th class="text-center">作成者</th>
 
 
                           	@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
+                                    <th class="text-center">更新者</th>
+                                    <th class="text-center">更新日時</th>
                                     <th class="text-center">更新</th>
                                     <th class="text-center">削除</th>
-                                    <th class="text-center">公開</th>
                                     <th class="text-center">編集ロック</th>
+                                    <th class="text-center">公開</th>
                            @endif
+
                         </tr>
         			@foreach($pressuredrops[$i] as $pressuredrop)
+        			@if($pressuredrop->PUBLIC_FLG==1 or $pressuredrop->CREATE_USER_ID == Auth::user()->id)
                         <tr>
                             <td>
                                 <!--流量-->
@@ -69,23 +71,25 @@
     								{{ $pressuredrop->PRESSURE_DROP }}
     							@endif
                             </td>
-                            <td>
-                            	<!--更新日時-->
-                            	{{ $pressuredrop->updated_at }}
-                            </td>
+
                             <td>
                             	<!--作成者-->
                             	{{ $pressuredrop->CREATE_USER }}
                             </td>
-                            <td>
-                            	<!--更新者-->
-                            	{{ $pressuredrop->UPDATE_USER }}
-                            </td>
+
 
 
 
 
 							@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
+                                    <td>
+                                    	<!--更新者-->
+                                    	{{ $pressuredrop->UPDATE_USER }}
+                                    </td>
+                                     <td>
+                                    	<!--更新日時-->
+                                    	{{ $pressuredrop->updated_at }}
+                                    </td>
                                     <td>
                                     <!--更新ボタン-->
                                     @if($pressuredrop->LOCK_FLG === 1)
@@ -113,33 +117,59 @@
                                    		</form>
                                    	@endif
                                	 	</td>
-                               	 	<td>
-                               	 	 <!--公開ボタン-->
-                               	 	@if(Auth::user()->id === $pressuredrop->CREATE_USER_ID)
-                                        @if($pressuredrop->PUBLIC_FLG == 1)
-                                        	公開中
-                                        @else
-                                        	非公開中
-                                        @endif
-                                        <!--公開設定ボタンを設置 -->
-        							@else
-        								公開中
-        							@endif
-                               	 	</td>
                                	 	 <td>
                                	     <!--編集ロックボタン-->
-                               	    @if(Auth::user()->role === "manager" or Auth::user()->role === "admin" )
-        								@if($pressuredrop->PUBLIC_FLG == 1)
-                                            編集アンロック<!--編集ロックをオフにするボタンを設置 -->
+        								@if($pressuredrop->LOCK_FLG == 1)
+                                            <!--編集ロックをオン -->
+                                            <form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
+                           						<input type="hidden" name="flg" value="unlock">
+                           						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+                                                <input type="hidden" name="_method" value="PUT">
+                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                       			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></button>
+                                       		</form>
         								@else
-                                            編集ロック<!--編集ロックをオンにするボタンを設置 -->
+                                            <!--編集ロックをオフ-->
+                                            <form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
+                           						<input type="hidden" name="flg" value="lock">
+                           						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+                                                <input type="hidden" name="_method" value="PUT">
+                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                       			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></button>
+                                       		</form>
                                         @endif
-                               	 	@else
-                               	 		権限なし
-                               	 	@endif
-                               	 	</td>
+                               	 </td>
+                           	 	 <!--公開ボタン-->
+
+                               	 	<td>
+                                   	 	@if(Auth::user()->id == $pressuredrop->CREATE_USER_ID)
+                                            @if($pressuredrop->PUBLIC_FLG == 1)
+                                            	<!--公開中 -->
+                                            	 <form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
+                               						<input type="hidden" name="flg" value="be_private">
+                               						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+                                                    <input type="hidden" name="_method" value="PUT">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                           			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></button>
+                                       			</form>
+                                            @else
+                                            	<!--非公開中 -->
+                                            	<form action="/pressuredrop/{{ $pressuredrop->id }}" method="post" id="update{{$pressuredrop->id}}">
+                               						<input type="hidden" name="flg" value="be_public">
+                               						<input type="hidden" name="material_id" value="{{ $material_details[0]->MATERIAL_ID}}">
+                                                    <input type="hidden" name="_method" value="PUT">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                           			<button type="submit" class="btn btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></button>
+                                           		</form>
+                                            @endif
+                                            <!--公開設定ボタンを設置 -->
+                                        @else
+                							-
+            							@endif
+        							</td>
                             @endif
 						</tr>
+					@endif
         			@endforeach
     			</table>
     			@if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
