@@ -18,17 +18,19 @@ use Illuminate\Support\Facades\Route;
 //   });
      //Route::get('/', 'menuController@index');
 
-     Route::resource('material','App\Http\Controllers\materialController');
+    //物品
+    Route::resource('material','App\Http\Controllers\materialController');
+    //物品詳細
+    Route::resource('material-detail','App\Http\Controllers\materialDetailController');
+    //圧力損失、揚程表示
+    Route::resource('pressuredrop','App\Http\Controllers\pressuredropController');
+    //シミュレーション
+    Route::resource('simulation','App\Http\Controllers\simulationController');
 
-     Route::resource('pressuredrop','App\Http\Controllers\pressuredropController');
 
-     Route::resource('material-detail','App\Http\Controllers\materialDetailController');
-
+    Auth::routes();
 
 
-Auth::routes();
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home2');
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home2');
