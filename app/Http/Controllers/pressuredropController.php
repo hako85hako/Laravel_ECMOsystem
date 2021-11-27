@@ -99,6 +99,9 @@ class pressuredropController extends Controller
                 if(empty($speed_list)){
                     $speed_list = array();
                 }
+                if(empty($flow_list)){
+                    $flow_list = array();
+                }
                 return view(
                     'pressuredrop/showHead',
                     compact(
