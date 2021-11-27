@@ -38,19 +38,19 @@ class pressuredropController extends Controller
                  ->where('DELETE_FLG',True)
                  ->groupBy('SPEED')
                  ->get('SPEED');
+                 //var_dump($pre_speed_list);
                  //↑ここで[0]指定しているので、規格追加はできないようにする
                 for($i = 0; $i<count($pre_speed_list);$i++){
-                    $skip_flg = false;
                     //public_flgが立っていない場合
                     //非公開にしたいのでログインユーザー==作成者ではない場合、配列から削除する
-                    if($pre_speed_list[$i]->PUBLIC_FLG == 0){
-                        if($pre_speed_list[$i]->CREATE_USER_ID != Auth::user()->id){
-                            //unset($pre_speed_list[$i]);
-                            //continue;
-                            $skip_flg = true;
-                        }
-                    }
-                    if($skip_flg){
+//                     if($pre_speed_list[$i]->PUBLIC_FLG == 0){
+//                         if($pre_speed_list[$i]->CREATE_USER_ID != Auth::user()->id){
+//                             //unset($pre_speed_list[$i]);
+//                             //continue;
+//                             $skip_flg = true;
+//                         }
+//                     }
+                    //if($skip_flg){
                         //回転数のリスト作成
                         $speed_list[] = $pre_speed_list[$i]->SPEED;
                         //print($speed_list[$i]."<br>");
@@ -95,13 +95,7 @@ class pressuredropController extends Controller
                         $flow_list[$speed_list[$i]] = $pre_flow_list2;
                         //**************************************************
                     }
-                }
-                if(empty($speed_list)){
-                    $speed_list = array();
-                }
-                if(empty($flow_list)){
-                    $flow_list = array();
-                }
+                //}
                 return view(
                     'pressuredrop/showHead',
                     compact(
