@@ -96,7 +96,9 @@ class pressuredropController extends Controller
                         //**************************************************
                     }
                 }
-
+                if(empty($speed_list)){
+                    $speed_list = array();
+                }
                 return view(
                     'pressuredrop/showHead',
                     compact(
