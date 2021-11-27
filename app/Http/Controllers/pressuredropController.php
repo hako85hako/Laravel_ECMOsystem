@@ -96,6 +96,7 @@ class pressuredropController extends Controller
                         //**************************************************
                     }
                 }
+
                 return view(
                     'pressuredrop/showHead',
                     compact(
