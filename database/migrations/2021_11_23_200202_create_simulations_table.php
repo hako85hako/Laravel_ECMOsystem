@@ -13,11 +13,15 @@ class CreateSimulationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('simulations', function (Blueprint $table) {
+        Schema::create('SIMULATIONs', function (Blueprint $table) {
             $table->id()->comment('シミュレーションID');
-            //$table->integer('A_CANNULA')->default(null)->comment('送血管物品ID');
-            //$table->integer('DETAIL_A_CANNULA')->default(null)->comment('送血管物品詳細ID');;//削除フラグ
             $table->string('SIMULATION_NAME', 200)->default('新規シミュレーション')->comment('シミュレーション名');//作成者
+            $table->double('FLOW')->default(4.0)->comment('流量情報');
+            $table->integer('ABP')->default(60)->comment('動脈圧情報');
+            $table->integer('CVP')->default(5)->comment('中心静脈圧情報');
+            $table->boolean('ABP_FLG')->default(true)->comment('動脈圧使用フラグ');
+            $table->boolean('CVP_FLG')->default(true)->comment('中心静脈圧使用フラグ');
+
             $table->boolean('PUBLIC_FLG')->default(false)->comment('公開フラグ');//公開フラグ
             $table->boolean('LOCK_FLG')->default(false)->comment('編集不可フラグ');//編集不可フラグ
             $table->boolean('DELETE_FLG')->default(true)->comment('削除フラグ');//削除フラグ
@@ -37,6 +41,6 @@ class CreateSimulationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('simulations');
+        Schema::dropIfExists('SIMULATIONs');
     }
 }

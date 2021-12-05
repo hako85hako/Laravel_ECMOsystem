@@ -13,11 +13,17 @@ class CreateSimulationDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('simulation_details', function (Blueprint $table) {
+        Schema::create('SIMULATION_DETAILs', function (Blueprint $table) {
             $table->id();
+            $table->integer('SERIAL_NUMBER')->default(0)->comment('表示、計算順序');
             $table->integer('SIMULATION_ID')->comment('シミュレーションID');
-            $table->integer('MATERIAL_ID')->default(null)->comment('物品ID');
-            $table->integer('MATERIAL_DETAIL_ID')->default(null)->comment('物品詳細ID');
+            $table->integer('MATERIAL_ID')->nullable()->default(null)->comment('物品ID');
+            $table->integer('MATERIAL_DETAIL_ID')->nullable()->default(null)->comment('物品詳細ID');
+            $table->double('REVOLUTION_INF')->default(0.0)->comment('回転数情報');
+            $table->boolean('PUMP_FLG')->default(false)->comment('ポンプフラグ');
+            $table->interger('ERROR_FLG')->default(0)->comment('エラーフラグ');
+
+            $table->boolean('DELETE_FLG')->default(true)->comment('削除フラグ');//削除フラグ
             $table->string('CREATE_USER', 200)->comment('作成者');//作成者
             $table->string('UPDATE_USER', 200)->comment('更新者');//更新者
             $table->string('CREATE_USER_ID', 200)->comment('作成者ID');//作成者ID
@@ -34,6 +40,6 @@ class CreateSimulationDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('simulation_details');
+        Schema::dropIfExists('SIMULATION_DETAILs');
     }
 }

@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Route;
     Route::resource('pressuredrop','App\Http\Controllers\pressuredropController');
     //シミュレーション
     Route::resource('simulation','App\Http\Controllers\simulationController');
+    //シミュレーション詳細
+    Route::resource('simulation-detail','App\Http\Controllers\simulationDetailController');
 
 
     Auth::routes();

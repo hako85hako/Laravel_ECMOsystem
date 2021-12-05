@@ -83,8 +83,13 @@ class materialDetailController extends Controller
         return view('material-detail/edit', compact('material_detail'));
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request,$id){
         $material_detail = material_detail::findOrFail($id);
+        if($request->type == 0){
+            //materialの更新をした場合
+        }else if($request->type == 1){
+            //material_detailの更新をした場合
+        }
         //$material_detail->MATERIAL_ID = $request->MATERIAL_ID;
         $material_detail->MATERIAL_SIZE = $request->MATERIAL_SIZE;
         $material_detail->MATERIAL_VOLUME = $request->MATERIAL_VOLUME;
