@@ -19,7 +19,7 @@
                     <th class="text-center">物品数</th>
                 	<th class="text-center">更新日</th>
                     <th class="text-center">作成者</th>
-                    <th class="text-center">更新</th>
+                    <th class="text-center">名称変更</th>
                     <th class="text-center">削除</th>
                 </tr>
                 @foreach($simulations as $simulation)
@@ -27,7 +27,13 @@
                     <td>
                     	<a href="/simulation/{{ $simulation->id }}">{{ $simulation->SIMULATION_NAME }}</a>
                     </td>
-                    <td>//TODO 子要素の個数を表示する</td>
+                    <td>
+                    	@foreach($simulation_detail_counts as $simulation_detail_count)
+                    		@if($simulation->id == $simulation_detail_count['id'])
+                    			{{$simulation_detail_count['count']}}
+                    		@endif
+                    	@endforeach
+                    </td>
                     <td>{{ $simulation->updated_at }}</td>
 					<td>{{ $simulation->CREATE_USER }}</td>
     				<td>
@@ -45,9 +51,7 @@
                 </tr>
                 @endforeach
             </table>
-            @if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
         		<div><a href="/simulation/create" class="btn btn-default">新規作成</a></div>
-        	@endif
 		</div>
     </div>
 </div>

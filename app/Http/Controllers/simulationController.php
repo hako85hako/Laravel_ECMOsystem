@@ -27,7 +27,22 @@ class simulationController extends Controller{
         $simulations = simulation::where('DELETE_FLG',True)
         ->where('CREATE_USER_ID',Auth::user()->id)
         ->get();
-        return view('simulation/index', compact('simulations'));
+        $simulation_detail_counts = array();
+        //simulationsの存在判定
+        if(isset($simulations)){
+            //simulation_detailの個数をカウント
+            for($i = 0; $i<count($simulations);$i++){
+                $simulation_details = simulation_detail::where('DELETE_FLG',True)
+                ->where('SIMULATION_ID',$simulations[$i]->id)
+                ->get();
+                $simulation_detail_counts[] =
+                ['id'=> $simulations[$i]->id,
+                'count'=>count($simulation_details)];
+            }
+        }
+        return view('simulation/index',
+            compact('simulations',
+                    'simulation_detail_counts'));
     }
 
     //新規シミュレーションの登録

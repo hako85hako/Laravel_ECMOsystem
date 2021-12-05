@@ -200,14 +200,14 @@
 				@endif
                 @endforeach
             </table>
-            @if(Auth::user()->role === "manager" or Auth::user()->role === "admin")
+
         		<div>
         			<form action="/simulation-detail/create" method="get">
                 		<input type="hidden" name="simulation_id" value="{{ $simulation -> id }}">
                			<button type="submit" class="btn btn-xs btn-primary" aria-label="Left Align">追加</button>
                		</form>
         		</div>
-        	@endif
+
 		</div>
     </div>
 </div>
