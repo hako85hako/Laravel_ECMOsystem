@@ -21,7 +21,7 @@ class CreateSimulationDetailsTable extends Migration
             $table->integer('MATERIAL_DETAIL_ID')->nullable()->default(null)->comment('物品詳細ID');
             $table->double('REVOLUTION_INF')->default(0.0)->comment('回転数情報');
             $table->boolean('PUMP_FLG')->default(false)->comment('ポンプフラグ');
-            $table->interger('ERROR_FLG')->default(0)->comment('エラーフラグ');
+            $table->integer('ERROR_FLG')->default(0)->comment('エラーフラグ');
 
             $table->boolean('DELETE_FLG')->default(true)->comment('削除フラグ');//削除フラグ
             $table->string('CREATE_USER', 200)->comment('作成者');//作成者
