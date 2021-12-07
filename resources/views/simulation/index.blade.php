@@ -17,8 +17,9 @@
         		<tr>
                     <th class="text-center">シミュレーション名</th>
                     <th class="text-center">物品数</th>
-                	<th class="text-center">更新日</th>
-                    <th class="text-center">作成者</th>
+                	<th class="text-center">流量</th>
+                    <th class="text-center">ABP</th>
+                    <th class="text-center">CVP</th>
                     <th class="text-center">名称変更</th>
                     <th class="text-center">削除</th>
                 </tr>
@@ -30,12 +31,25 @@
                     <td>
                     	@foreach($simulation_detail_counts as $simulation_detail_count)
                     		@if($simulation->id == $simulation_detail_count['id'])
-                    			{{$simulation_detail_count['count']}}
+                    			{{$simulation_detail_count['count']}} 個
                     		@endif
                     	@endforeach
                     </td>
-                    <td>{{ $simulation->updated_at }}</td>
-					<td>{{ $simulation->CREATE_USER }}</td>
+                    <td>{{ $simulation->FLOW }} [L/min]</td>
+                    <td>
+                    	@if($simulation->ABP_FLG == 1)
+                    		{{ $simulation->ABP }} [mmHg]
+                    	@else
+                    		なし
+             			@endif
+                    </td>
+					<td>
+						@if($simulation->CVP_FLG == 1)
+                    		{{ $simulation->CVP }} [mmHg]
+                    	@else
+                    		なし
+             			@endif
+					</td>
     				<td>
     					<a href="/simulation/{{ $simulation->id }}/edit">
     						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>

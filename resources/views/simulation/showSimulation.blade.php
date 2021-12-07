@@ -108,13 +108,31 @@
                 @foreach($simulation_details as $simulation_detail)
                 @if($simulation_detail->ERROR_FLG!=0)
                 <tr class="bg-danger">
+                	<td>
+                	</td>
+                	<td colspan="2" class="table-active" style="color:red;">
+						検証データが存在しない流量範囲です。
+						グラフにデータが反映されていません。
+                	</td>
+                	<td>
+                	</td>
+                </tr>
+                <tr class="bg-danger">
                 @else
                 <tr>
                 @endif
+                	@if($simulation_detail->ERROR_FLG!=0)
+                	<td style="border:none;">
+                	@else
                 	<td>
+                	@endif
                 		{{ $simulation_detail -> SERIAL_NUMBER }}
                 	</td>
-                    <td>
+                    @if($simulation_detail->ERROR_FLG!=0)
+                	<td style="border:none;">
+                	@else
+                	<td>
+                	@endif
 						<form action="/simulation-detail/{{$simulation_detail->id}}"
 							method="post" id="material_form{{ $simulation_detail -> SERIAL_NUMBER }}">
 						 	<input type="hidden" name="_method" value="PUT">
@@ -135,7 +153,11 @@
                             </div>
                    		</form>
                     </td>
-                    <td>
+                    @if($simulation_detail->ERROR_FLG!=0)
+                	<td style="border:none;">
+                	@else
+                	<td>
+                	@endif
 						<form action="/simulation-detail/{{$simulation_detail->id}}"
 							method="post" id="material_detail_form{{ $simulation_detail -> SERIAL_NUMBER }}">
 						 	<input type="hidden" name="_method" value="PUT">
@@ -174,7 +196,11 @@
                             @endif
                    		</form>
 					</td>
-    				<td>
+    				@if($simulation_detail->ERROR_FLG!=0)
+                	<td style="border:none;">
+                	@else
+                	<td>
+                	@endif
 						<form action="/simulation-detail/{{$simulation_detail->id}}" method="post">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -195,16 +221,18 @@
 							<button type="submit" class="btn btn-xs btn-success" aria-label="Left Align">↑ ↓</button>
 						</form>
                 	</td>
-                	<td style="border:none;"></td>
+                	<td style="border:none"></td>
 				</tr>
 				@endif
                 @endforeach
             </table>
 
-        		<div>
+        		<div class="text-center">
         			<form action="/simulation-detail/create" method="get">
                 		<input type="hidden" name="simulation_id" value="{{ $simulation -> id }}">
-               			<button type="submit" class="btn btn-xs btn-primary" aria-label="Left Align">追加</button>
+<!--                			<button type="submit" class="btn btn-xs btn-primary" aria-label="Left Align">追加</button> -->
+               			<button type="submit" class="btn btn-default" aria-label="Right Align">シミュレーションに物品追加</button>
+
                		</form>
         		</div>
 

@@ -119,6 +119,7 @@ class simulationController extends Controller{
 
     //シミュレーションの詳細表示
     public function show($id){
+        $calc = new calcs();
         $errorSetting = new errorSetting();
         $simulation = simulation::findOrFail($id);
         $simulation_details = simulation_detail::where('DELETE_FLG',True)
@@ -154,7 +155,6 @@ class simulationController extends Controller{
             ->first();
             //流量情報を確認して格納
             //$material_detail_kinds->SLICE_FLOW;
-
             //存在確認
             if(isset($material_kinds->MATERIAL_KIND)){
                 if($material_kinds->MATERIAL_KIND == "Centrifugal-pump"){
@@ -178,20 +178,16 @@ class simulationController extends Controller{
                     //回転数情報をセット
                     $speed = $simulation_details[$i]->REVOLUTION_INF;
                     //物品の揚程を算出
-                    $head = pressure_drop::where('DELETE_FLG',True)
-                    ->where('MATERIAL_DETAIL_ID',$simulation_details[$i]->MATERIAL_DETAIL_ID)
-                    ->where('FLOW',$flow)
-                    ->where('SPEED',$speed)
-                    ->first();
+                    $head = $calc->headCalc($material_detail_kinds,$flow,$speed);
                     if(isset($head)){
                         if(isset($graphData[$i])){
-                            $graphData[] = $graphData[$i] + $head->HEAD;
+                            $graphData[] = round($graphData[$i] + $head,2);
                             $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
-                            $graphData[] = $head->HEAD;
+                            $graphData[] = $head;
                             $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
-                            $errorSetting->errorSet($simulation_details[$i],2);
+                            $errorSetting->errorSet($simulation_details[$i],0);
                         }
                     }else{
                         $graphData[] = $graphData[$i] + 0;
@@ -204,19 +200,16 @@ class simulationController extends Controller{
                     $simulation_details[$i]->save();
                     //圧力損失物品の場合
                     //物品の圧力損失を算出
-                    $pressuredrop = pressure_drop::where('DELETE_FLG',True)
-                    ->where('MATERIAL_DETAIL_ID',$simulation_details[$i]->MATERIAL_DETAIL_ID)
-                    ->where('FLOW',$flow)
-                    ->first();
+                    $pressuredrop = $calc->pressureCalc($material_detail_kinds,$flow);
                     if(isset($pressuredrop)){
                         if(isset($graphData[$i])){
-                            $graphData[] = $graphData[$i] - $pressuredrop->PRESSURE_DROP;
+                            $graphData[] = round($graphData[$i] - $pressuredrop,2);
                             $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
-                            $graphData[] = $pressuredrop->PRESSURE_DROP;
+                            $graphData[] = $pressuredrop;
                             $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
-                            $errorSetting->errorSet($simulation_details[$i],8);
+                            $errorSetting->errorSet($simulation_details[$i],0);
                         }
 
                     }else{
@@ -292,5 +285,94 @@ class errorSetting{
     public function errorSet($simulation_detail,$errorCode){
         $simulation_detail->ERROR_FLG = $errorCode;
         $simulation_detail->save();
+    }
+}
+
+
+class calcs{
+    public function pressureCalc($material_detail,$flow){
+        $roundInt = new roundInt();
+        $flows = $roundInt->branchRound($material_detail->SLICE_FLOW, $flow);
+        $pressuredrop1 = pressure_drop::where('DELETE_FLG',True)
+        ->where('MATERIAL_DETAIL_ID',$material_detail->id)
+        ->where('FLOW',$flows[0])
+        ->first();
+        $pressuredrop2 = pressure_drop::where('DELETE_FLG',True)
+        ->where('MATERIAL_DETAIL_ID',$material_detail->id)
+        ->where('FLOW',$flows[1])
+        ->first();
+        if(isset($pressuredrop1)&&isset($pressuredrop2)){
+            $pressuredrop1 = $pressuredrop1->PRESSURE_DROP;
+            $pressuredrop2 = $pressuredrop2->PRESSURE_DROP;
+            //流量の割合を算出
+            $flow_rate = $flow/($flows[0]+$flows[1]);
+            if($pressuredrop1>$pressuredrop2){
+                $pre_result = $pressuredrop2;
+            }else{
+                $pre_result = $pressuredrop1;
+            }
+            $result = round($pre_result+(abs($pressuredrop1-$pressuredrop2)*$flow_rate),2);
+        }else{
+            $result = null;
+        }
+        return $result;
+    }
+
+    public function headCalc($material_detail,$flow,$speed){
+        $roundInt = new roundInt;
+        $flows = $roundInt->branchRound($material_detail->SLICE_FLOW, $flow);
+        $head1 = pressure_drop::where('DELETE_FLG',True)
+        ->where('MATERIAL_DETAIL_ID',$material_detail->id)
+        ->where('FLOW',$flows[0])
+        ->where('SPEED',$speed)
+        ->first();
+        $head2 = pressure_drop::where('DELETE_FLG',True)
+        ->where('MATERIAL_DETAIL_ID',$material_detail->id)
+        ->where('FLOW',$flows[1])
+        ->where('SPEED',$speed)
+        ->first();
+        if(isset($head1)&&isset($head2)){
+            $head1 = $head1->HEAD;
+            $head2 = $head2->HEAD;
+            //流量の割合を算出
+            $flow_rate = $flow/($flows[0]+$flows[1]);
+            if($head1>$head2){
+                $pre_result = $head2;
+            }else{
+                $pre_result = $head1;
+            }
+            $result = round($pre_result+(abs($head1-$head2)*$flow_rate),2);
+        }else{
+            $result = null;
+        }
+        return $result;
+    }
+}
+
+/**
+ * どのメソッドを使用するかの分岐をする<br>
+ *
+ */
+class roundInt{
+    public function branchRound($slice,$i){
+        //var_dump($i);
+        //スライスの逆数をとる
+        $reverse = 1/$slice;
+        $i = $i*$reverse;
+        $result = array();
+        $pre_result1=floor($i);
+        if($i>=0){
+            //$floor=$i-$pre_result1;
+            $add_num = 1;
+        }else{
+            //$floor=$i+$pre_result1;
+            $add_num = 1;
+        }
+        //var_dump($floor);
+        $result1 = $pre_result1/$reverse;
+        $result2 = ($pre_result1+$add_num)/$reverse;
+        $result[] = $result1;
+        $result[] = $result2;
+        return $result;
     }
 }
