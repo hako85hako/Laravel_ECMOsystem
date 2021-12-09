@@ -242,8 +242,8 @@ class simulationController extends Controller{
         ->get();
 
         //TODO 仮のflow情報格納
-        $flow_slice = 0.1;
-        $flow_max = 10;
+        $flow_slice = 1;
+        $flow_max = 100;
         $flow_items = array();
         for($i=0; $i<($flow_max/$flow_slice);$i++){
             $flow_items[] = $flow_slice*$i;

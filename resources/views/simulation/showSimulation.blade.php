@@ -37,11 +37,12 @@
                 <tr>
             		<td>
                     	<select class="form-control" form="simulation_inf" name="FLOW" onchange="simulationChange()">
+                        <!-- 安定動作のために整数値比較 -->
                           @foreach($flow_items as $flow_item)
-                          	@if($simulation->FLOW == $flow_item)
-                          	 <option selected>{{$flow_item}}</option>
+                          	@if($simulation->FLOW*10 == $flow_item)
+                          	 <option selected>{{$flow_item/10}}</option>
                           	@else
-                          	 <option>{{$flow_item}}</option>
+                          	 <option>{{$flow_item/10}}</option>
                           	@endif
                           @endforeach
                        	</select>
@@ -208,7 +209,7 @@
                        	</form>
 					</td>
                 </tr>
-                @if($simulation_detail -> SERIAL_NUMBER != $simulation_details->count())
+				@if(!$loop->last)
 				<tr>
 					<td style="border:none;"></td>
                 	<td style="border:none;">
@@ -235,10 +236,7 @@
 
                		</form>
         		</div>
-
 		</div>
-    </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 <script src="{{ asset('/js/createGraph_simulation1.js') }}"></script>
 <script src="{{ asset('/js/autoForm.js') }}"></script>
