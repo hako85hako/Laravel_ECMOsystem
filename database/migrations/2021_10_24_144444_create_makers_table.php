@@ -36,6 +36,6 @@ class CreateMakersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('MAKERSs');
+        #Schema::dropIfExists('MAKERSs');
     }
 }

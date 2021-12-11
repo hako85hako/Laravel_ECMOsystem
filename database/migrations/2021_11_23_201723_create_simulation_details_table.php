@@ -40,6 +40,6 @@ class CreateSimulationDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('SIMULATION_DETAILs');
+        #Schema::dropIfExists('SIMULATION_DETAILs');
     }
 }

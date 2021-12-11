@@ -40,6 +40,6 @@ class CreatePressuredropsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pressuredrops');
+        #Schema::dropIfExists('pressuredrops');
     }
 }
