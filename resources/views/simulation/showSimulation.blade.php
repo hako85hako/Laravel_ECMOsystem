@@ -21,7 +21,7 @@
 
  	@if($simulation->MONITOR == 'graphs')
  	  <!--  ナビゲーション表示① -->
- 	  <div class="row">
+ 	<div class="row">
         <ul class="nav nav-tabs nav-justified">
           <li class="active"><a href="#">Graphs</a></li>
           <li>
@@ -195,7 +195,7 @@
 			<input type="hidden" name="type" value="option">
 		</form>
    	</div>
-<!-- 		<div class="col-md-11 col-md-offset-1"> -->
+	<div class="row">
 		<div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
     		<table class="table text-center">
         		<tr>
@@ -325,18 +325,18 @@
 				@endif
                 @endforeach
             </table>
-
-        		<div class="text-center">
-        			<form action="/simulation-detail/create" method="get">
-                		<input type="hidden" name="simulation_id" value="{{ $simulation -> id }}">
+    		<div class="text-center">
+    			<form action="/simulation-detail/create" method="get">
+            		<input type="hidden" name="simulation_id" value="{{ $simulation -> id }}">
 <!--                			<button type="submit" class="btn btn-xs btn-primary" aria-label="Left Align">追加</button> -->
-               			<button type="submit" class="btn btn-default" aria-label="Right Align">シミュレーションに物品追加</button>
+           			<button type="submit" class="btn btn-default" aria-label="Right Align">シミュレーションに物品追加</button>
 
-               		</form>
-        		</div>
+           		</form>
+    		</div>
 		</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-<script src="{{ asset('/js/createGraph_simulation1.js') }}"></script>
-<script src="{{ asset('/js/autoForm.js') }}"></script>
+	</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" defer></script>
+<script src="{{ asset('/js/createGraph_simulation1.js') }}" defer></script>
+<script src="{{ asset('/js/autoForm.js') }}" defer></script>
 @endsection
 </html>
