@@ -17,12 +17,105 @@
             </ol>
         </nav>
     </div>
-    <!-- グラフ表示 -->
-    <div class="row">
+
+
+ 	@if($simulation->MONITOR == 'graphs')
+ 	  <!--  ナビゲーション表示① -->
+        <ul class="nav nav-tabs nav-justified">
+          <li class="active"><a href="#">Graphs</a></li>
+          <li>
+          	<a href="javascript:moveMonitor.submit()">Parameters</a>
+          	<form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
+        		<input type="hidden" name="monitor" value="parameters">
+       		</form>
+          </li>
+        </ul>
+    <div class="row">　</div>
+	 <!-- グラフ表示 -->
+	<div class="row">
     	<div class="chart-container" style="position: relative; height:70vh; width:auto">
 			<canvas id="simulation1Graph"></canvas>
 		</div>
 	</div>
+	@elseif($simulation->MONITOR == 'parameters')
+	 <!--  ナビゲーション表示① -->
+        <ul class="nav nav-tabs nav-justified">
+          <li>
+          	<a href="javascript:moveMonitor.submit()">Graphs</a>
+          	<form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
+        		<input type="hidden" name="monitor" value="graphs">
+       		</form>
+          </li>
+          <li class="active"><a href="#">Parameters</a></li>
+        </ul>
+        <div class="row">　</div>
+        <!-- 予測パネル表示 -->
+        <div class="row">
+            <div class="panel panel-default">
+            	<div class="panel-body">
+            	<table class="table text-center">
+        		<tr>
+        			<th class="text-center">種別</th>
+        			<th class="text-center">圧力</th>
+        			<th class="text-center">物品名</th>
+                </tr>
+				@if($simulation->CVP_FLG == 1)
+                <tr>
+                	<td>CVP測定圧</td>
+                	<td>{{$simulation->CVP}} [mmHg]</td>
+                	<td></td>
+                </tr>
+                @endif
+            	@foreach($simulation_details as $simulation_detail)
+            	<tr>
+                      <!-- 揚程or圧力損失の生成 -->
+                      <td>
+                          @if($simulation_detail->PUMP_FLG == 1)
+                          		<div style="color:blue">　揚程　</div>
+                          @else
+                          		<div style="color:red">圧力損失</div>
+                          @endif
+                      </td>
+                      @if($simulation_detail->PUMP_FLG == 1)
+                      <td style="color:blue">+
+                      @elseif($printData[$loop->index] =='--')
+                      <td style="color:yellow">
+                      @else
+                      <td style="color:red">-
+                      @endif
+                      	{{$printData[$loop->index]}} [mmHg]
+                      </td>
+                      <td>
+                          <!-- 物品名の生成 -->
+                		  @foreach($materials as $material)
+                          	@if($material->id == $simulation_detail -> MATERIAL_ID)
+                          	 	{{$material->MATERIAL_NAME}}
+                          	@endif
+                          @endforeach
+                          <!-- サイズの生成 -->
+                          @foreach($material_details as $material_detail)
+                          	@if($material_detail->id == $simulation_detail -> MATERIAL_DETAIL_ID)
+                          		  @if($simulation_detail->PUMP_FLG == 1)
+                          			{{$simulation_detail->REVOLUTION_INF}}rpm
+                                  @else
+                                  	{{$material_detail->MATERIAL_SIZE}}
+                                  @endif
+                          	@endif
+                          @endforeach
+                     </td>
+                </tr>
+            	@endforeach
+            	@if($simulation->ABP_FLG == 1)
+                <tr>
+                	<td>ABP測定圧</td>
+                	<td>{{$simulation->ABP}} [mmHg]</td>
+                	<td></td>
+                </tr>
+                @endif
+            	</table>
+            </div>
+        </div>
+	@endif
 	<div class="row">　</div>
     <!--simulation設定 -->
     <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
@@ -88,6 +181,7 @@
                 	</td>
             	</tr>
         	</table>
+        </div>
     </div>
 	<div class="row">
     		<form action="/simulation/{{$simulation->id}}" method="post" id="simulation_inf">

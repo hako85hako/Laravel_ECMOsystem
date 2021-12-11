@@ -93,7 +93,6 @@ class simulationController extends Controller{
             $simulation->UPDATE_USER_ID = Auth::user()->id;
             $simulation->save();
             return redirect("/simulation/".$id)->with($id);
-
         }else{
             $simulation->SIMULATION_NAME = $request->SIMULATION_NAME;
             $simulation->UPDATE_USER = Auth::user()->name;
@@ -118,7 +117,7 @@ class simulationController extends Controller{
     }
 
     //シミュレーションの詳細表示
-    public function show($id){
+    public function show(Request $request,$id){
         $calc = new calcs();
         $errorSetting = new errorSetting();
         $simulation = simulation::findOrFail($id);
@@ -131,8 +130,18 @@ class simulationController extends Controller{
             $simulation_details[$i]->SERIAL_NUMBER = $i+1;
             $simulation_details[$i]->save();
         }
+        //遷移先画面振り分け初期処理
+        if(!isset($simulation->MONITOR)){
+            $simulation->MONITOR = "graphs";
+        }elseif(!isset($request->monitor)){
+            //requestが無い場合は何もしない
+        }else{
+            $simulation->MONITOR = $request->monitor;
+        }
+        $simulation->save();
         //回転数格納用配列を設置
         $speeds = array();
+        $printData=array();
         $graphData = array();
         $graphLabel = array();
         //流量格納用配列を設置　
@@ -189,7 +198,9 @@ class simulationController extends Controller{
                             $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }
+                        $printData[] = $head;
                     }else{
+                        $printData[] = '--';
                         $graphData[] = $graphData[$i] + 0;
                         $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                         $errorSetting->errorSet($simulation_details[$i],4);
@@ -211,8 +222,9 @@ class simulationController extends Controller{
                             $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }
-
+                        $printData[] = $pressuredrop;
                     }else{
+                        $printData[] = '--';
                         $graphData[] = $graphData[$i] - 0;
                         $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
                         $errorSetting->errorSet($simulation_details[$i],16);
@@ -222,6 +234,7 @@ class simulationController extends Controller{
                 if(isset($graphData[$i])){
                     //物品情報取得できない場合の回避策
                     $graphData[] = $graphData[$i];
+                    $printData[] = '--';
                     $graphLabel[] = '未登録';
                     $errorSetting->errorSet($simulation_details[$i],32);
                 }else{
@@ -266,11 +279,13 @@ class simulationController extends Controller{
         }
 
         return view('simulation/showSimulation',
-            compact('simulation',
+            compact(
+                'simulation',
                 'simulation_details',
                 'material_details',
                 'speeds',
                 'materials',
+                'printData',
                 'graphData',
                 'graphLabel',
                 'flow_items',
