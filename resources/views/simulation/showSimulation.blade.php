@@ -21,6 +21,7 @@
 
  	@if($simulation->MONITOR == 'graphs')
  	  <!--  ナビゲーション表示① -->
+ 	  <div class="row">
         <ul class="nav nav-tabs nav-justified">
           <li class="active"><a href="#">Graphs</a></li>
           <li>
@@ -30,6 +31,7 @@
        		</form>
           </li>
         </ul>
+    </div>
     <div class="row">　</div>
 	 <!-- グラフ表示 -->
 	<div class="row">
@@ -39,6 +41,7 @@
 	</div>
 	@elseif($simulation->MONITOR == 'parameters')
 	 <!--  ナビゲーション表示① -->
+	 <div class="row">
         <ul class="nav nav-tabs nav-justified">
           <li>
           	<a href="javascript:moveMonitor.submit()">Graphs</a>
@@ -48,18 +51,19 @@
           </li>
           <li class="active"><a href="#">Parameters</a></li>
         </ul>
-        <div class="row">　</div>
-        <!-- 予測パネル表示 -->
-        <div class="row">
-            <div class="panel panel-default">
-            	<div class="panel-body">
+     </div>
+     <div class="row">　</div>
+    <!-- 予測パネル表示 -->
+    <div class="row">
+        <div class="panel panel-default">
+        	<div class="panel-body">
             	<table class="table text-center">
         		<tr>
         			<th class="text-center">種別</th>
         			<th class="text-center">圧力</th>
         			<th class="text-center">物品名</th>
                 </tr>
-				@if($simulation->CVP_FLG == 1)
+    			@if($simulation->CVP_FLG == 1)
                 <tr>
                 	<td>CVP測定圧</td>
                 	<td>{{$simulation->CVP}} [mmHg]</td>
@@ -113,9 +117,9 @@
                 </tr>
                 @endif
             	</table>
-            </div>
-        </div>
-   	</div>
+        	</div>
+    	</div>
+	</div>
 	@endif
 	<div class="row">　</div>
     <!--simulation設定 -->
@@ -185,13 +189,12 @@
         </div>
     </div>
 	<div class="row">
-    		<form action="/simulation/{{$simulation->id}}" method="post" id="simulation_inf">
-    		 	<input type="hidden" name="_method" value="PUT">
-    			<input type="hidden" name="_token" value="{{ csrf_token() }}">
-    			<input type="hidden" name="type" value="option">
-   			</form>
-   		</div>
-    </div>
+		<form action="/simulation/{{$simulation->id}}" method="post" id="simulation_inf">
+		 	<input type="hidden" name="_method" value="PUT">
+			<input type="hidden" name="_token" value="{{ csrf_token() }}">
+			<input type="hidden" name="type" value="option">
+		</form>
+   	</div>
 <!-- 		<div class="col-md-11 col-md-offset-1"> -->
 		<div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
     		<table class="table text-center">
