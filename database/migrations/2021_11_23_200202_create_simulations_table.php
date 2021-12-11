@@ -21,7 +21,7 @@ class CreateSimulationsTable extends Migration
             $table->integer('CVP')->default(5)->comment('中心静脈圧情報');
             $table->boolean('ABP_FLG')->default(true)->comment('動脈圧使用フラグ');
             $table->boolean('CVP_FLG')->default(true)->comment('中心静脈圧使用フラグ');
-            $table->string('MONITOR', 200)->default('Graphs')->comment('表示画面名');
+            $table->string('MONITOR', 200)->default('graphs')->comment('表示画面名');
 
             $table->boolean('PUBLIC_FLG')->default(false)->comment('公開フラグ');//公開フラグ
             $table->boolean('LOCK_FLG')->default(false)->comment('編集不可フラグ');//編集不可フラグ

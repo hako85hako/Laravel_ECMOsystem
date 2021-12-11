@@ -20,7 +20,7 @@
 
 
  	@if($simulation->MONITOR == 'graphs')
- 	  <!--  ナビゲーション表示① -->
+ 	<!--  ナビゲーション表示① -->
  	<div class="row">
         <ul class="nav nav-tabs nav-justified">
           <li class="active"><a href="#">Graphs</a></li>
@@ -307,36 +307,35 @@
                        	</form>
 					</td>
                 </tr>
-				@if(!$loop->last)
-				<tr>
-					<td style="border:none;"></td>
-                	<td style="border:none;">
-                		<form action="/simulation-detail/{{$simulation_detail->id}}"
-							method="post" id="material_form{{ $simulation_detail -> SERIAL_NUMBER }}">
-						 	<input type="hidden" name="_method" value="PUT">
-                			<input type="hidden" name="_token" value="{{ csrf_token() }}">
-							<input type="hidden" name="type" value="2">
-							<input type="hidden" name="simulation_id" value="{{$simulation_detail->SIMULATION_ID}}">
-							<button type="submit" class="btn btn-xs btn-success" aria-label="Left Align">↑ ↓</button>
-						</form>
-                	</td>
-                	<td style="border:none"></td>
-				</tr>
-				@endif
+    				@if(!$loop->last)
+        				<tr>
+        					<td style="border:none;"></td>
+                        	<td style="border:none;">
+                        		<form action="/simulation-detail/{{$simulation_detail->id}}"
+        							method="post" id="material_form{{ $simulation_detail -> SERIAL_NUMBER }}">
+        						 	<input type="hidden" name="_method" value="PUT">
+                        			<input type="hidden" name="_token" value="{{ csrf_token() }}">
+        							<input type="hidden" name="type" value="2">
+        							<input type="hidden" name="simulation_id" value="{{$simulation_detail->SIMULATION_ID}}">
+        							<button type="submit" class="btn btn-xs btn-success" aria-label="Left Align">↑ ↓</button>
+        						</form>
+                        	</td>
+                        	<td style="border:none"></td>
+        				</tr>
+    				@endif
                 @endforeach
             </table>
     		<div class="text-center">
     			<form action="/simulation-detail/create" method="get">
             		<input type="hidden" name="simulation_id" value="{{ $simulation -> id }}">
-<!--                			<button type="submit" class="btn btn-xs btn-primary" aria-label="Left Align">追加</button> -->
            			<button type="submit" class="btn btn-default" aria-label="Right Align">シミュレーションに物品追加</button>
 
            		</form>
     		</div>
 		</div>
 	</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" defer></script>
-<script src="{{ asset('/js/createGraph_simulation1.js') }}" defer></script>
-<script src="{{ asset('/js/autoForm.js') }}" defer></script>
+<script src="http://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script src="{{ asset('/js/createGraph_simulation1.js') }}"></script>
+<script src="{{ asset('/js/autoForm.js') }}"></script>
 @endsection
 </html>
