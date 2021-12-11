@@ -115,6 +115,7 @@
             	</table>
             </div>
         </div>
+   	</div>
 	@endif
 	<div class="row">　</div>
     <!--simulation設定 -->
