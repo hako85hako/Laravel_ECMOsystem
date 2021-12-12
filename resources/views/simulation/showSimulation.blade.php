@@ -23,9 +23,9 @@
  	<!--  ナビゲーション表示① -->
  	<div class="row">
         <ul class="nav nav-tabs nav-justified">
-          <li class="active"><a href="#">Graphs</a></li>
-          <li>
-          	<a href="javascript:moveMonitor.submit()">Parameters</a>
+          <li class="active"><a href="#" id="monitorSelect">Graphs</a></li>
+          <li >
+          	<a href="javascript:moveMonitor.submit()" id="monitorTab">Parameters</a>
           	<form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
         		<input type="hidden" name="monitor" value="parameters">
        		</form>
@@ -44,18 +44,18 @@
 	 <div class="row">
         <ul class="nav nav-tabs nav-justified">
           <li>
-          	<a href="javascript:moveMonitor.submit()">Graphs</a>
+          	<a href="javascript:moveMonitor.submit()" id="monitorTab">Graphs</a>
           	<form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
         		<input type="hidden" name="monitor" value="graphs">
        		</form>
           </li>
-          <li class="active"><a href="#">Parameters</a></li>
+          <li class="active"><a href="#" id="monitorSelect">Parameters</a></li>
         </ul>
      </div>
      <div class="row">　</div>
     <!-- 予測パネル表示 -->
     <div class="row">
-        <div class="panel panel-default">
+        <div class="panel panel-default" >
         	<div class="panel-body">
             	<table class="table text-center">
         		<tr>
@@ -187,7 +187,6 @@
             	</tr>
         	</table>
         </div>
-    </div>
 	<div class="row">
 		<form action="/simulation/{{$simulation->id}}" method="post" id="simulation_inf">
 		 	<input type="hidden" name="_method" value="PUT">
@@ -197,7 +196,7 @@
    	</div>
 	<div class="row">
 		<div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
-    		<table class="table text-center">
+    		<table class="table text-center" id="panel">
         		<tr>
         			<th class="text-center">No.</th>
                     <th class="text-center">機器名</th>
@@ -334,6 +333,7 @@
     		</div>
 		</div>
 	</div>
+</div>
 <script src="http://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 <script src="{{ asset('/js/createGraph_simulation1.js') }}"></script>
 <script src="{{ asset('/js/autoForm.js') }}"></script>

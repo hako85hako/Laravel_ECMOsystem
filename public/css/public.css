@@ -55,8 +55,22 @@ tr{
 	font-size:14px;
 }
 
+
+
 a{
 	font-size:14px;
+}
+
+
+.panel{
+	background-color:#2D3748
+}
+
+#monitorTab:hover{
+	background-color:#2D3748
+}
+#monitorSelect{
+	background-color:#1A202C
 }
 
 
@@ -74,8 +88,4 @@ a{
 	background-color:#1A202C;
 }
 
-tr td{
-
-
-}
 
