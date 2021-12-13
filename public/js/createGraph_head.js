@@ -55,9 +55,13 @@
 					suggestedMax: 300,
 					suggestedMin: 0,
 					stepSize: 50,
-					}
+					},
 				}]
-			}
+			},
+			// 凡例非表示
+			legend: {
+		       display: false,
+		    }
 	    }
 	});
 

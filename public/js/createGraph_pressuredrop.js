@@ -55,7 +55,11 @@
 					stepSize: 50,
 					}
 				}]
-			}
+			},
+			// 凡例非表示
+			legend: {
+		       display: true,
+		    }
 	    }
 	});
 

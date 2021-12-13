@@ -23,14 +23,16 @@
  	<!--  ナビゲーション表示① -->
  	<div class="row">
         <ul class="nav nav-tabs nav-justified">
-          <li class="active"><a href="#" id="monitorSelect">Graphs</a></li>
+          <li class="active">
+			<a href="#" id="monitorSelect">Graphs</a>
+          </li>
           <li >
           	<a href="javascript:moveMonitor.submit()" id="monitorTab">Parameters</a>
-          	<form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
-        		<input type="hidden" name="monitor" value="parameters">
-       		</form>
           </li>
         </ul>
+        <form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
+        	<input type="hidden" name="monitor" value="parameters">
+       	</form>
     </div>
     <div class="row">　</div>
 	 <!-- グラフ表示 -->
@@ -45,12 +47,14 @@
         <ul class="nav nav-tabs nav-justified">
           <li>
           	<a href="javascript:moveMonitor.submit()" id="monitorTab">Graphs</a>
-          	<form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
-        		<input type="hidden" name="monitor" value="graphs">
-       		</form>
           </li>
-          <li class="active"><a href="#" id="monitorSelect">Parameters</a></li>
+          <li class="active">
+          		<a href="#" id="monitorSelect">Parameters</a>
+          </li>
         </ul>
+        <form action="/simulation/{{ $simulation->id }}" method="get" name="moveMonitor">
+        	<input type="hidden" name="monitor" value="graphs">
+       	</form>
      </div>
      <div class="row">　</div>
     <!-- 予測パネル表示 -->
@@ -75,13 +79,13 @@
                       <!-- 揚程or圧力損失の生成 -->
                       <td>
                           @if($simulation_detail->PUMP_FLG == 1)
-                          		<div style="color:blue">　揚程　</div>
+                          		<div style="color:#1DA2FF">揚程</div>
                           @else
                           		<div style="color:red">圧力損失</div>
                           @endif
                       </td>
                       @if($simulation_detail->PUMP_FLG == 1)
-                      <td style="color:blue">+
+                      <td style="color:#1DA2FF">+
                       @elseif($printData[$loop->index] =='--')
                       <td style="color:yellow">
                       @else

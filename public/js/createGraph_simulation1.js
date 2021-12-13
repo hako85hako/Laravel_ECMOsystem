@@ -49,6 +49,12 @@
 	        }
 	      },
 		scales:{
+			xAxes: [{
+	          ticks: {
+	            maxRotation: 70,
+	            minRotation: 70
+	          }
+        	}],
 			yAxes: [{
 				ticks: {
 					suggestedMax: 300,
@@ -56,7 +62,11 @@
 					stepSize: 50,
 					}
 				}]
-			}
+			},
+			// 凡例非表示
+			legend: {
+		       display: false,
+		    }
 	    }
 	});
 

@@ -118,7 +118,9 @@ class simulationController extends Controller{
 
     //シミュレーションの詳細表示
     public function show(Request $request,$id){
+        あああああああああ
         $calc = new calcs();
+        $tools = new myTools();
         $errorSetting = new errorSetting();
         $simulation = simulation::findOrFail($id);
         $simulation_details = simulation_detail::where('DELETE_FLG',True)
@@ -188,21 +190,30 @@ class simulationController extends Controller{
                     $speed = $simulation_details[$i]->REVOLUTION_INF;
                     //物品の揚程を算出
                     $head = $calc->headCalc($material_detail_kinds,$flow,$speed);
+                    $var = $tools->substrVal($material_kinds->MATERIAL_NAME,20);
+                    if(is_array($var)){
+                        $lavelData = [$var[0],$var[1],$speed."rpm"];
+                    }else{
+                        $lavelData = [$var,$speed."rpm"];
+                    }
                     if(isset($head)){
                         if(isset($graphData[$i])){
                             $graphData[] = round($graphData[$i] + $head,2);
-                            $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
+                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
+                            $graphLabel[] = $lavelData;
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
                             $graphData[] = $head;
-                            $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
+                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
+                            $graphLabel[] = $lavelData;
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }
                         $printData[] = $head;
                     }else{
                         $printData[] = '--';
                         $graphData[] = $graphData[$i] + 0;
-                        $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
+                        //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
+                        $graphLabel[] = $lavelData;
                         $errorSetting->errorSet($simulation_details[$i],4);
                     }
                 }else{
@@ -212,21 +223,30 @@ class simulationController extends Controller{
                     //圧力損失物品の場合
                     //物品の圧力損失を算出
                     $pressuredrop = $calc->pressureCalc($material_detail_kinds,$flow);
+                    $var = $tools->substrVal($material_kinds->MATERIAL_NAME,20);
+                    if(is_array($var)){
+                        $lavelData = [$var[0],$var[1],$material_detail_kinds->MATERIAL_SIZE];
+                    }else{
+                        $lavelData = [$var,$material_detail_kinds->MATERIAL_SIZE];
+                    }
                     if(isset($pressuredrop)){
                         if(isset($graphData[$i])){
                             $graphData[] = round($graphData[$i] - $pressuredrop,2);
-                            $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
+                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
+                            $graphLabel[] = $lavelData;
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
                             $graphData[] = $pressuredrop;
-                            $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
+                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
+                            $graphLabel[] = $lavelData;
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }
                         $printData[] = $pressuredrop;
                     }else{
                         $printData[] = '--';
                         $graphData[] = $graphData[$i] - 0;
-                        $graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
+                        //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
+                        $graphLabel[] = $lavelData;
                         $errorSetting->errorSet($simulation_details[$i],16);
                     }
                 }
@@ -389,5 +409,15 @@ class roundInt{
         $result[] = $result1;
         $result[] = $result2;
         return $result;
+    }
+}
+
+class myTools{
+    public function substrVal($val,$num){
+        if(mb_strlen($val, 'UTF-8') > $num){
+            return [mb_substr($val,0,$num), mb_substr($val,$num)];
+        }else{
+            return $val;
+        }
     }
 }
