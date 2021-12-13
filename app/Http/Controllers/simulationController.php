@@ -118,7 +118,6 @@ class simulationController extends Controller{
 
     //シミュレーションの詳細表示
     public function show(Request $request,$id){
-        あああああああああ
         $calc = new calcs();
         $tools = new myTools();
         $errorSetting = new errorSetting();
