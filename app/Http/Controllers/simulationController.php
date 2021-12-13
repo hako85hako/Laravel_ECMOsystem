@@ -189,6 +189,7 @@ class simulationController extends Controller{
                     $speed = $simulation_details[$i]->REVOLUTION_INF;
                     //物品の揚程を算出
                     $head = $calc->headCalc($material_detail_kinds,$flow,$speed);
+                    $var = array();
                     $var = $tools->substrVal($material_kinds->MATERIAL_NAME,20);
                     if(is_array($var)){
                         $lavelData = [$var[0],$var[1],$speed."rpm"];
@@ -222,6 +223,7 @@ class simulationController extends Controller{
                     //圧力損失物品の場合
                     //物品の圧力損失を算出
                     $pressuredrop = $calc->pressureCalc($material_detail_kinds,$flow);
+                    $var = array();
                     $var = $tools->substrVal($material_kinds->MATERIAL_NAME,20);
                     if(is_array($var)){
                         $lavelData = [$var[0],$var[1],$material_detail_kinds->MATERIAL_SIZE];
