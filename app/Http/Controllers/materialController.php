@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\material;
 use App\Models\material_detail;
@@ -33,29 +34,35 @@ class materialController extends Controller{
     }
 
     public function store(Request $request){
-        $material = new material();
-        $material->COMPANY_NAME = $request->COMPANY_NAME;
-        $material->MATERIAL_KIND = $request->MATERIAL_KIND;
-        $material->MATERIAL_NAME = $request->MATERIAL_NAME;
-        $material->CREATE_USER = Auth::user()->name;
-        $material->UPDATE_USER = Auth::user()->name;
-        $material->CREATE_USER_ID = Auth::user()->id;
-        $material->UPDATE_USER_ID = Auth::user()->id;
-        $material->save();
-        $material_detail = new material_detail();
-        $material_detail->MATERIAL_ID = $material->id;
-        $material_detail->CREATE_USER = Auth::user()->name;
-        $material_detail->UPDATE_USER = Auth::user()->name;
-        $material_detail->CREATE_USER_ID = Auth::user()->id;
-        $material_detail->UPDATE_USER_ID = Auth::user()->id;
-        $material_detail->save();
-        $pressuredrop = new pressure_drop();
-        $pressuredrop->MATERIAL_DETAIL_ID = $material_detail->id;
-        $pressuredrop->CREATE_USER = Auth::user()->name;
-        $pressuredrop->UPDATE_USER = Auth::user()->name;
-        $pressuredrop->CREATE_USER_ID = Auth::user()->id;
-        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
-        $pressuredrop->save();
+        DB::beginTransaction();
+        try{
+            $material = new material();
+            $material->COMPANY_NAME = $request->COMPANY_NAME;
+            $material->MATERIAL_KIND = $request->MATERIAL_KIND;
+            $material->MATERIAL_NAME = $request->MATERIAL_NAME;
+            $material->CREATE_USER = Auth::user()->name;
+            $material->UPDATE_USER = Auth::user()->name;
+            $material->CREATE_USER_ID = Auth::user()->id;
+            $material->UPDATE_USER_ID = Auth::user()->id;
+            $material->save();
+            $material_detail = new material_detail();
+            $material_detail->MATERIAL_ID = $material->id;
+            $material_detail->CREATE_USER = Auth::user()->name;
+            $material_detail->UPDATE_USER = Auth::user()->name;
+            $material_detail->CREATE_USER_ID = Auth::user()->id;
+            $material_detail->UPDATE_USER_ID = Auth::user()->id;
+            $material_detail->save();
+            $pressuredrop = new pressure_drop();
+            $pressuredrop->MATERIAL_DETAIL_ID = $material_detail->id;
+            $pressuredrop->CREATE_USER = Auth::user()->name;
+            $pressuredrop->UPDATE_USER = Auth::user()->name;
+            $pressuredrop->CREATE_USER_ID = Auth::user()->id;
+            $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
+            $pressuredrop->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/material");
     }
 
@@ -68,24 +75,36 @@ class materialController extends Controller{
     }
 
     public function update(Request $request, $id){
-        $material = material::findOrFail($id);
-        $material->COMPANY_NAME = $request->COMPANY_NAME;
-        $material->MATERIAL_KIND = $request->MATERIAL_KIND;
-        $material->MATERIAL_NAME = $request->MATERIAL_NAME;
-        $material->UPDATE_USER = Auth::user()->name;
-        $material->UPDATE_USER_ID = Auth::user()->id;
-        $material->save();
+        DB::beginTransaction();
+        try{
+            $material = material::findOrFail($id);
+            $material->COMPANY_NAME = $request->COMPANY_NAME;
+            $material->MATERIAL_KIND = $request->MATERIAL_KIND;
+            $material->MATERIAL_NAME = $request->MATERIAL_NAME;
+            $material->UPDATE_USER = Auth::user()->name;
+            $material->UPDATE_USER_ID = Auth::user()->id;
+            $material->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/material");
     }
 
     public function destroy($id){
-        //$material = material::findOrFail($id);
-        //$material->delete();
-        $material = material::findOrFail($id);
-        $material->DELETE_FLG = 0;
-        $material->UPDATE_USER = Auth::user()->name;
-        $material->UPDATE_USER_ID = Auth::user()->id;
-        $material->save();
+        DB::beginTransaction();
+        try{
+            //$material = material::findOrFail($id);
+            //$material->delete();
+            $material = material::findOrFail($id);
+            $material->DELETE_FLG = 0;
+            $material->UPDATE_USER = Auth::user()->name;
+            $material->UPDATE_USER_ID = Auth::user()->id;
+            $material->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/material");
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\pressure_drop;
 use App\Models\material_detail;
@@ -136,6 +137,8 @@ class pressuredropController extends Controller
                         //**************************************************************************************
                         //  いらんかも
                         //**************************************************************************************
+                        DB::beginTransaction();
+                        try{
                             //その物品で流量が唯一の流量は削除不可にする
                             $flow_count = pressure_drop::where('MATERIAL_DETAIL_ID',$material_details[$i]->id)
                             ->where('DELETE_FLG',True)
@@ -151,10 +154,12 @@ class pressuredropController extends Controller
                                 $pre_pressuredrops[$ii]->ONLY_FLOW_FLG = 1;
                                 $pre_pressuredrops[$ii]->save();
                             }
+                            DB::commit();
+                        }catch (\Exception $e) {
+                            DB::rollback();
+                        }
                         //**************************************************************************************
                     }
-
-
                     $pressuredrop_list[$size_list[$i]] = $pre_pressuredrop_list;
                     $pre_pressuredrop_list = array();
                     //グラフ作成*****************************************
@@ -197,27 +202,39 @@ class pressuredropController extends Controller
             $pressuredrop->MATERIAL_DETAIL_ID = $request->material_detail_id;
             $pressuredrop->FLOW = ($request->last_flow)+($request->slice_flow);
         }
-        $pressuredrop->PUBLIC_FLG = 0;
-        $pressuredrop->CREATE_USER = Auth::user()->name;
-        $pressuredrop->UPDATE_USER = Auth::user()->name;
-        $pressuredrop->CREATE_USER_ID = Auth::user()->id;
-        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
-        $pressuredrop->save();
+        DB::beginTransaction();
+        try{
+            $pressuredrop->PUBLIC_FLG = 0;
+            $pressuredrop->CREATE_USER = Auth::user()->name;
+            $pressuredrop->UPDATE_USER = Auth::user()->name;
+            $pressuredrop->CREATE_USER_ID = Auth::user()->id;
+            $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
+            $pressuredrop->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/pressuredrop/".$request->material_id)->with($request->material_id);
     }
 
     public function store(Request $request)
     {
-        $pressuredrop = new pressure_drop();
-        $pressuredrop->FLOW = $request->FLOW;
-        $pressuredrop->PRESSURE_DROP = $request->PRESSURE_DROP;
-        //$pressuredrop->SPEED = $request->SPEED;
-        //$pressuredrop->HEAD = $request->HEAD;
-        $pressuredrop->CREATE_USER = Auth::user()->name;
-        $pressuredrop->UPDATE_USER = Auth::user()->name;
-        $pressuredrop->CREATE_USER_ID = Auth::user()->id;
-        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
-        $pressuredrop->save();
+        DB::beginTransaction();
+        try{
+            $pressuredrop = new pressure_drop();
+            $pressuredrop->FLOW = $request->FLOW;
+            $pressuredrop->PRESSURE_DROP = $request->PRESSURE_DROP;
+            //$pressuredrop->SPEED = $request->SPEED;
+            //$pressuredrop->HEAD = $request->HEAD;
+            $pressuredrop->CREATE_USER = Auth::user()->name;
+            $pressuredrop->UPDATE_USER = Auth::user()->name;
+            $pressuredrop->CREATE_USER_ID = Auth::user()->id;
+            $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
+            $pressuredrop->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/pressuredrop");
     }
 
@@ -246,20 +263,32 @@ class pressuredropController extends Controller
         }elseif($request->flg=="be_private"){
             $pressuredrop->PUBLIC_FLG = 0;
         }
-        $pressuredrop->UPDATE_USER = Auth::user()->name;
-        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
-        $pressuredrop->save();
+        DB::beginTransaction();
+        try{
+            $pressuredrop->UPDATE_USER = Auth::user()->name;
+            $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
+            $pressuredrop->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/pressuredrop/".$request->material_id)->with($request->material_id);
     }
 
     public function destroy(Request $request,$id){
-        //$material = material::findOrFail($id);
-        //$material->delete();
-        $pressuredrop = pressure_drop::findOrFail($id);
-        $pressuredrop->DELETE_FLG = 0;
-        $pressuredrop->UPDATE_USER = Auth::user()->name;
-        $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
-        $pressuredrop->save();
+        DB::beginTransaction();
+        try{
+            //$material = material::findOrFail($id);
+            //$material->delete();
+            $pressuredrop = pressure_drop::findOrFail($id);
+            $pressuredrop->DELETE_FLG = 0;
+            $pressuredrop->UPDATE_USER = Auth::user()->name;
+            $pressuredrop->UPDATE_USER_ID = Auth::user()->id;
+            $pressuredrop->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/pressuredrop/".$request->material_id)->with($request->material_id);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\material;
 use App\Models\material_detail;
@@ -56,20 +57,25 @@ class simulationController extends Controller{
     }
 
     public function store(Request $request){
-        $simulation = new simulation();
-        $simulation->SIMULATION_NAME = $request->SIMULATION_NAME;
-        $simulation->CREATE_USER = Auth::user()->name;
-        $simulation->UPDATE_USER = Auth::user()->name;
-        $simulation->CREATE_USER_ID = Auth::user()->id;
-        $simulation->UPDATE_USER_ID = Auth::user()->id;
-        $simulation->save();
+        DB::beginTransaction();
+        try{
+            $simulation = new simulation();
+            $simulation->SIMULATION_NAME = $request->SIMULATION_NAME;
+            $simulation->CREATE_USER = Auth::user()->name;
+            $simulation->UPDATE_USER = Auth::user()->name;
+            $simulation->CREATE_USER_ID = Auth::user()->id;
+            $simulation->UPDATE_USER_ID = Auth::user()->id;
+            $simulation->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/simulation");
     }
 
     public function edit($id){
         // DBよりURIパラメータと同じIDを持つBookの情報を取得
         $simulation = simulation::findOrFail($id);
-
         return view('simulation/edit', compact('simulation'));
     }
 
@@ -89,15 +95,27 @@ class simulationController extends Controller{
             }else{
                 $simulation->CVP_FLG = 0;
             }
-            $simulation->UPDATE_USER = Auth::user()->name;
-            $simulation->UPDATE_USER_ID = Auth::user()->id;
-            $simulation->save();
+            DB::beginTransaction();
+            try{
+                DB::commit();
+                $simulation->UPDATE_USER = Auth::user()->name;
+                $simulation->UPDATE_USER_ID = Auth::user()->id;
+                $simulation->save();
+            }catch (\Exception $e) {
+                DB::rollback();
+            }
             return redirect("/simulation/".$id)->with($id);
         }else{
-            $simulation->SIMULATION_NAME = $request->SIMULATION_NAME;
-            $simulation->UPDATE_USER = Auth::user()->name;
-            $simulation->UPDATE_USER_ID = Auth::user()->id;
-            $simulation->save();
+            DB::beginTransaction();
+            try{
+                $simulation->SIMULATION_NAME = $request->SIMULATION_NAME;
+                $simulation->UPDATE_USER = Auth::user()->name;
+                $simulation->UPDATE_USER_ID = Auth::user()->id;
+                $simulation->save();
+                DB::commit();
+            }catch (\Exception $e) {
+                DB::rollback();
+            }
             $simulations = simulation::where('DELETE_FLG',True)
             ->where('CREATE_USER_ID',Auth::user()->id)
             ->get();
@@ -106,13 +124,17 @@ class simulationController extends Controller{
     }
 
     public function destroy($id){
-        //$material = material::findOrFail($id);
-        //$material->delete();
-        $simulation = simulation::findOrFail($id);
-        $simulation->DELETE_FLG = 0;
-        $simulation->UPDATE_USER = Auth::user()->name;
-        $simulation->UPDATE_USER_ID = Auth::user()->id;
-        $simulation->save();
+        DB::beginTransaction();
+        try{
+            $simulation = simulation::findOrFail($id);
+            $simulation->DELETE_FLG = 0;
+            $simulation->UPDATE_USER = Auth::user()->name;
+            $simulation->UPDATE_USER_ID = Auth::user()->id;
+            $simulation->save();
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
         return redirect("/simulation");
     }
 
@@ -127,19 +149,25 @@ class simulationController extends Controller{
         ->orderBy('SERIAL_NUMBER', 'asc')
         ->get();
         //ID確認処理&振り直し処理
-        for($i = 0; $i<count($simulation_details);$i++){
-            $simulation_details[$i]->SERIAL_NUMBER = $i+1;
-            $simulation_details[$i]->save();
+        DB::beginTransaction();
+        try {
+            for($i = 0; $i<count($simulation_details);$i++){
+                $simulation_details[$i]->SERIAL_NUMBER = $i+1;
+                $simulation_details[$i]->save();
+            }
+            //遷移先画面振り分け初期処理
+            if(!isset($simulation->MONITOR)){
+                $simulation->MONITOR = "graphs";
+            }elseif(!isset($request->monitor)){
+                //requestが無い場合は何もしない
+            }else{
+                $simulation->MONITOR = $request->monitor;
+            }
+            $simulation->save();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
         }
-        //遷移先画面振り分け初期処理
-        if(!isset($simulation->MONITOR)){
-            $simulation->MONITOR = "graphs";
-        }elseif(!isset($request->monitor)){
-            //requestが無い場合は何もしない
-        }else{
-            $simulation->MONITOR = $request->monitor;
-        }
-        $simulation->save();
         //回転数格納用配列を設置
         $speeds = array();
         $printData=array();
@@ -181,9 +209,15 @@ class simulationController extends Controller{
                     }
                     //speedのリストを格納
                     $speeds[$simulation_details[$i]->MATERIAL_DETAIL_ID] = $set_speeds;
-                    //Simulation_detailsのポンプフラグをセット
-                    $simulation_details[$i]->PUMP_FLG = 1;
-                    $simulation_details[$i]->save();
+                    DB::beginTransaction();
+                    try{
+                        //Simulation_detailsのポンプフラグをセット
+                        $simulation_details[$i]->PUMP_FLG = 1;
+                        $simulation_details[$i]->save();
+                        DB::commit();
+                    }catch (\Exception $e) {
+                        DB::rollback();
+                    }
                     //圧力構築物品の場合
                     //回転数情報をセット
                     $speed = $simulation_details[$i]->REVOLUTION_INF;
@@ -218,6 +252,7 @@ class simulationController extends Controller{
                     }
                 }else{
                     //Simulation_detailsのポンプフラグを回収
+
                     $simulation_details[$i]->PUMP_FLG = 0;
                     $simulation_details[$i]->save();
                     //圧力損失物品の場合
@@ -319,8 +354,13 @@ class simulationController extends Controller{
 class errorSetting{
     //ErrorFlgの設定
     public function errorSet($simulation_detail,$errorCode){
-        $simulation_detail->ERROR_FLG = $errorCode;
-        $simulation_detail->save();
+        DB::beginTransaction();
+        try{
+            $simulation_detail->ERROR_FLG = $errorCode;
+            $simulation_detail->save();
+        }catch (\Exception $e) {
+            DB::rollback();
+        }
     }
 }
 
