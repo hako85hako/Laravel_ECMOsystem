@@ -173,6 +173,7 @@ class simulationController extends Controller{
         $printData=array();
         $graphData = array();
         $graphLabel = array();
+        $unknown_pressure = 0;
         //流量格納用配列を設置　
         //流量情報をセット
         $flow = $simulation->FLOW;
@@ -181,6 +182,7 @@ class simulationController extends Controller{
             //中心静脈圧をセット
             $graphData[] = $simulation->CVP;
             $graphLabel[] = 'CVP';
+            $unknown_pressure += $simulation->CVP;
         }
         for($i = 0; $i<count($simulation_details);$i++){
             //物品情報を抽出
@@ -235,11 +237,13 @@ class simulationController extends Controller{
                             $graphData[] = round($graphData[$i] + $head,2);
                             //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                             $graphLabel[] = $lavelData;
+                            $unknown_pressure += round($head,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
                             $graphData[] = $head;
                             //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                             $graphLabel[] = $lavelData;
+                            $unknown_pressure += round($head,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }
                         $printData[] = $head;
@@ -270,11 +274,13 @@ class simulationController extends Controller{
                             $graphData[] = round($graphData[$i] - $pressuredrop,2);
                             //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
                             $graphLabel[] = $lavelData;
+                            $unknown_pressure -= round($pressuredrop,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
                             $graphData[] = $pressuredrop;
                             //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
                             $graphLabel[] = $lavelData;
+                            $unknown_pressure -= round($pressuredrop,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }
                         $printData[] = $pressuredrop;
@@ -303,6 +309,7 @@ class simulationController extends Controller{
             //動脈圧をセット
             $graphData[] = $simulation->ABP;
             $graphLabel[] = 'ABP';
+            $unknown_pressure -= $simulation->ABP;
         }
 
         $material_details = material_detail::where('DELETE_FLG',True)
@@ -346,7 +353,8 @@ class simulationController extends Controller{
                 'graphLabel',
                 'flow_items',
                 'cvp_items',
-                'abp_items'
+                'abp_items',
+                'unknown_pressure'
                 ));
     }
 }

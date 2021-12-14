@@ -122,6 +122,9 @@
                 @endif
             	</table>
         	</div>
+        	<div class="panel-footer">
+					　　損失が不明な圧力 = {{$unknown_pressure}} [mmHg]
+        	</div>
     	</div>
 	</div>
 	@endif
