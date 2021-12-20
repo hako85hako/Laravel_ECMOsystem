@@ -159,7 +159,7 @@ class simulationController extends Controller{
             if(!isset($simulation->MONITOR)){
                 $simulation->MONITOR = "graphs";
             }elseif(!isset($request->monitor)){
-                $simulation->MONITOR = "graphs";
+
             }else{
                 $simulation->MONITOR = $request->monitor;
             }
