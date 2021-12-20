@@ -159,7 +159,7 @@ class simulationController extends Controller{
             if(!isset($simulation->MONITOR)){
                 $simulation->MONITOR = "graphs";
             }elseif(!isset($request->monitor)){
-                //requestが無い場合は何もしない
+                $simulation->MONITOR = "graphs";
             }else{
                 $simulation->MONITOR = $request->monitor;
             }
@@ -285,11 +285,17 @@ class simulationController extends Controller{
                         }
                         $printData[] = $pressuredrop;
                     }else{
-                        $printData[] = '--';
-                        $graphData[] = $graphData[$i] - 0;
-                        //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
-                        $graphLabel[] = $lavelData;
-                        $errorSetting->errorSet($simulation_details[$i],16);
+                        if(isset($graphData[$i])){
+                            $printData[] = '--';
+                            $graphData[] = $graphData[$i] - 0;
+                            $graphLabel[] = $lavelData;
+                            $errorSetting->errorSet($simulation_details[$i],16);
+                        }else{
+                            $printData[] = '--';
+                            $graphData[] = 0;
+                            $graphLabel[] = $lavelData;
+                            $errorSetting->errorSet($simulation_details[$i],64);
+                        }
                     }
                 }
             }else{
@@ -300,6 +306,9 @@ class simulationController extends Controller{
                     $graphLabel[] = '未登録';
                     $errorSetting->errorSet($simulation_details[$i],32);
                 }else{
+                    $graphData[] = 0;
+                    $printData[] = '--';
+                    $graphLabel[] = '未登録';
                     $errorSetting->errorSet($simulation_details[$i],1);
                 }
             }
