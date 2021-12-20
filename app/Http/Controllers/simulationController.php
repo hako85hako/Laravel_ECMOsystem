@@ -196,6 +196,7 @@ class simulationController extends Controller{
             //流量情報を確認して格納
             //$material_detail_kinds->SLICE_FLOW;
             //存在確認
+            $check = 0;
             if(isset($material_kinds->MATERIAL_KIND)){
                 if($material_kinds->MATERIAL_KIND == "Centrifugal-pump"){
                     //回転数の種類を抽出
@@ -232,16 +233,25 @@ class simulationController extends Controller{
                     }else{
                         $lavelData = [$var,$speed."rpm"];
                     }
+
+
+                    //CVPが無い場合のみインクリメント調整
+                    if($i!=0){
+                        if(!$simulation->CVP_FLG){
+                            $i -= 1;
+                            $check = 1;
+                        }
+                    }
+                    //今回取得の揚程データがあるかの判定
                     if(isset($head)){
+                        //前回データの存在判定
                         if(isset($graphData[$i])){
                             $graphData[] = round($graphData[$i] + $head,2);
-                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                             $graphLabel[] = $lavelData;
                             $unknown_pressure += round($head,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
                             $graphData[] = $head;
-                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                             $graphLabel[] = $lavelData;
                             $unknown_pressure += round($head,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
@@ -254,31 +264,51 @@ class simulationController extends Controller{
                         $graphLabel[] = $lavelData;
                         $errorSetting->errorSet($simulation_details[$i],4);
                     }
-                }else{
-                    //Simulation_detailsのポンプフラグを回収
+                    //CVPが無い場合のみインクリメント調整
+                    if($check==1){
+                        if(!$simulation->CVP_FLG){
+                            $i += 1;
+                        }
+                        $check = 0;
+                    }
 
+                }else{
+                //圧力を損失する物品のロジック
+                    //Simulation_detailsのポンプフラグを回収
                     $simulation_details[$i]->PUMP_FLG = 0;
                     $simulation_details[$i]->save();
                     //圧力損失物品の場合
                     //物品の圧力損失を算出
                     $pressuredrop = $calc->pressureCalc($material_detail_kinds,$flow);
-                    $var = array();
-                    $var = $tools->substrVal($material_kinds->MATERIAL_NAME,20);
-                    if(is_array($var)){
-                        $lavelData = [$var[0],$var[1],$material_detail_kinds->MATERIAL_SIZE];
-                    }else{
-                        $lavelData = [$var,$material_detail_kinds->MATERIAL_SIZE];
+                    //********************************************************************
+                    //20文字以上の物品名は折り返す
+                    //********************************************************************
+                        $var = array();
+                        $var = $tools->substrVal($material_kinds->MATERIAL_NAME,20);
+                        if(is_array($var)){
+                            $lavelData = [$var[0],$var[1],$material_detail_kinds->MATERIAL_SIZE];
+                        }else{
+                            $lavelData = [$var,$material_detail_kinds->MATERIAL_SIZE];
+                        }
+                    //********************************************************************
+
+                    //CVPが無い場合のみインクリメント調整
+                    if($i!=0){
+                        if(!$simulation->CVP_FLG){
+                            $i -= 1;
+                            $check = 1;
+                        }
                     }
+                    //pressuredropが取得できたかの判定
                     if(isset($pressuredrop)){
+                        //前回データがあるかの判定
                         if(isset($graphData[$i])){
                             $graphData[] = round($graphData[$i] - $pressuredrop,2);
-                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
                             $graphLabel[] = $lavelData;
                             $unknown_pressure -= round($pressuredrop,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
                         }else{
-                            $graphData[] = $pressuredrop;
-                            //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$material_detail_kinds->MATERIAL_SIZE;
+                            $graphData[] = -$pressuredrop;
                             $graphLabel[] = $lavelData;
                             $unknown_pressure -= round($pressuredrop,2);
                             $errorSetting->errorSet($simulation_details[$i],0);
@@ -297,8 +327,22 @@ class simulationController extends Controller{
                             $errorSetting->errorSet($simulation_details[$i],64);
                         }
                     }
+                    //CVPが無い場合のみインクリメント調整
+                    if($check == 1){
+                        if(!$simulation->CVP_FLG){
+                            $i += 1;
+                        }
+                        $check = 0;
+                    }
                 }
             }else{
+                //CVPが無い場合のみインクリメント調整
+                if($i!=0){
+                    if(!$simulation->CVP_FLG){
+                        $i -= 1;
+                        $check = 1;
+                    }
+                }
                 if(isset($graphData[$i])){
                     //物品情報取得できない場合の回避策
                     $graphData[] = $graphData[$i];
@@ -310,6 +354,13 @@ class simulationController extends Controller{
                     $printData[] = '--';
                     $graphLabel[] = '未登録';
                     $errorSetting->errorSet($simulation_details[$i],1);
+                }
+                //CVPが無い場合のみインクリメント調整
+                if($check == 1){
+                    if(!$simulation->CVP_FLG){
+                        $i += 1;
+                    }
+                    $check = 0;
                 }
             }
         }
