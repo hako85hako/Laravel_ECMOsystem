@@ -249,12 +249,20 @@ class simulationController extends Controller{
                             $graphData[] = round($graphData[$i] + $head,2);
                             $graphLabel[] = $lavelData;
                             $unknown_pressure += round($head,2);
-                            $errorSetting->errorSet($simulation_details[$i],0);
+                            if($check == 1){
+                                $errorSetting->errorSet($simulation_details[$i+1],0);
+                            }else{
+                                $errorSetting->errorSet($simulation_details[$i],0);
+                            }
                         }else{
                             $graphData[] = $head;
                             $graphLabel[] = $lavelData;
                             $unknown_pressure += round($head,2);
-                            $errorSetting->errorSet($simulation_details[$i],0);
+                            if($check == 1){
+                                $errorSetting->errorSet($simulation_details[$i+1],0);
+                            }else{
+                                $errorSetting->errorSet($simulation_details[$i],0);
+                            }
                         }
                         $printData[] = $head;
                     }else{
@@ -262,7 +270,11 @@ class simulationController extends Controller{
                         $graphData[] = $graphData[$i] + 0;
                         //$graphLabel[] = $material_kinds->MATERIAL_NAME.' '.$speed."rpm";
                         $graphLabel[] = $lavelData;
-                        $errorSetting->errorSet($simulation_details[$i],4);
+                        if($check == 1){
+                            $errorSetting->errorSet($simulation_details[$i+1],4);
+                        }else{
+                            $errorSetting->errorSet($simulation_details[$i],4);
+                        }
                     }
                     //CVPが無い場合のみインクリメント調整
                     if($check==1){
@@ -306,12 +318,20 @@ class simulationController extends Controller{
                             $graphData[] = round($graphData[$i] - $pressuredrop,2);
                             $graphLabel[] = $lavelData;
                             $unknown_pressure -= round($pressuredrop,2);
-                            $errorSetting->errorSet($simulation_details[$i],0);
+                            if($check == 1){
+                                $errorSetting->errorSet($simulation_details[$i+1],0);
+                            }else{
+                                $errorSetting->errorSet($simulation_details[$i],0);
+                            }
                         }else{
                             $graphData[] = -$pressuredrop;
                             $graphLabel[] = $lavelData;
                             $unknown_pressure -= round($pressuredrop,2);
-                            $errorSetting->errorSet($simulation_details[$i],0);
+                            if($check == 1){
+                                $errorSetting->errorSet($simulation_details[$i+1],0);
+                            }else{
+                                $errorSetting->errorSet($simulation_details[$i],0);
+                            }
                         }
                         $printData[] = $pressuredrop;
                     }else{
@@ -319,12 +339,21 @@ class simulationController extends Controller{
                             $printData[] = '--';
                             $graphData[] = $graphData[$i] - 0;
                             $graphLabel[] = $lavelData;
-                            $errorSetting->errorSet($simulation_details[$i],16);
+                            if($check == 1){
+                                $errorSetting->errorSet($simulation_details[$i+1],16);
+                            }else{
+                                $errorSetting->errorSet($simulation_details[$i],16);
+                            }
                         }else{
                             $printData[] = '--';
                             $graphData[] = 0;
                             $graphLabel[] = $lavelData;
-                            $errorSetting->errorSet($simulation_details[$i],64);
+                            if($check == 1){
+                                $errorSetting->errorSet($simulation_details[$i+1],64);
+                            }else{
+                                $errorSetting->errorSet($simulation_details[$i],64);
+                            }
+
                         }
                     }
                     //CVPが無い場合のみインクリメント調整
@@ -348,12 +377,20 @@ class simulationController extends Controller{
                     $graphData[] = $graphData[$i];
                     $printData[] = '--';
                     $graphLabel[] = '未登録';
-                    $errorSetting->errorSet($simulation_details[$i],32);
+                    if($check == 1){
+                      $errorSetting->errorSet($simulation_details[$i+1],32);
+                    }else{
+                      $errorSetting->errorSet($simulation_details[$i],32);
+                    }
                 }else{
                     $graphData[] = 0;
                     $printData[] = '--';
                     $graphLabel[] = '未登録';
-                    $errorSetting->errorSet($simulation_details[$i],1);
+                    if($check == 1){
+                        $errorSetting->errorSet($simulation_details[$i+1],1);
+                    }else{
+                        $errorSetting->errorSet($simulation_details[$i],1);
+                    }
                 }
                 //CVPが無い場合のみインクリメント調整
                 if($check == 1){
